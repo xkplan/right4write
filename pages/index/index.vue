@@ -17,12 +17,42 @@
 						<text class="summary-card-money-income-number">0.90</text>
 					</view>
 				</view>
-				<cover-image class="summary-card-bg" mode="aspectFit" src="../../static/index/summary-bg.png"></cover-image>
+				<image class="summary-card-bg" mode="aspectFit" src="~@/static/index/summary-bg.png"></image>
 			</view>
 		</view>
-		
+
 		<view class="list">
-			
+			<view class="list-card" v-for="day in data">
+				<view class="list-card-title">
+					<view class="list-card-title-left">
+						<view class="list-card-title-left-split"></view>
+						<text class="list-card-title-left-name">{{day.time}}</text>
+					</view>
+					<view class="list-card-title-right">
+						<text class="list-card-title-right-income">+{{day.totalIncome}}</text>
+						<text class="list-card-title-right-spend">-{{day.totalSpend}}</text>
+					</view>
+				</view>
+				<view class="list-card-item" v-for="t in day.list">
+					<image class="list-card-item-icon" src="~@/static/logo.png" mode="widthFix" />
+					<view class="list-card-item-detail">
+						<view class="list-card-item-detail-split"></view>
+						<view class="list-card-item-detail-wrap">
+							<view class="list-card-item-detail-left">
+								<text class="list-card-item-detail-left-name">{{t.name}}</text>
+								<text class="list-card-item-detail-left-note">{{t.note}}</text>
+							</view>
+							<text class="list-card-item-detail-money">{{t.money}}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<view class="tabBar">
+			<image src="~@/static/icon-list-selected.png" />
+			<image src="~@/static/icon-data.png" />
+			<image src="~@/static/icon-new.png" />
 		</view>
 	</view>
 </template>
@@ -31,7 +61,64 @@
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				data: [{
+					time: "12/05",
+					totalSpend: "40.00",
+					totalIncome: "0.00",
+					list: [{
+							icon: "",
+							name: "吃饭",
+							note: "备注xxxx",
+							type: "spned",
+							money: "20.00"
+						},
+						{
+							icon: "",
+							name: "午餐",
+							note: "备注xxxx",
+							type: "spned",
+							money: "20.00"
+						}
+					]
+				}, {
+					time: "12/05",
+					totalSpend: "40.00",
+					totalIncome: "0.00",
+					list: [{
+							icon: "",
+							name: "吃饭",
+							note: "备注xxxx",
+							type: "spned",
+							money: "20.00"
+						},
+						{
+							icon: "",
+							name: "午餐",
+							note: "备注xxxx",
+							type: "spned",
+							money: "20.00"
+						}
+					]
+				}, {
+					time: "12/05",
+					totalSpend: "40.00",
+					totalIncome: "0.00",
+					list: [{
+							icon: "",
+							name: "吃饭",
+							note: "备注xxxx",
+							type: "spned",
+							money: "20.00"
+						},
+						{
+							icon: "",
+							name: "午餐",
+							note: "备注xxxx",
+							type: "spned",
+							money: "20.00"
+						}
+					]
+				}]
 			}
 		},
 		onLoad() {
@@ -44,116 +131,9 @@
 </script>
 
 <style>
+	@import url("~@/static/index/index.css");
+
 	page {
 		background-color: #F5F6F9;
-	}
-	
-	
-
-	/* 统计框 */
-	.box-summary {
-		position: fixed;
-		top: 29rpx;
-		left: 33rpx;
-
-		display: flex;
-		flex-direction: column;
-	}
-
-	.title-summary {
-		font-size: 63rpx;
-		color: #3C424A;
-	}
-
-	.summary-card {
-		margin-top: 17rpx;
-		width: 683rpx;
-		height: 258rpx;
-		background: #FFFFFF;
-		box-shadow: 0px -2px 15px 10px rgba(0, 0, 0, 0.02);
-		border-radius: 17px;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.summary-card-title {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		margin-left: 24rpx;
-		height: 52rpx;
-		margin-top: 29rpx;
-	}
-
-	.summary-card-title-split {
-		width: 8rpx;
-		height: 26rpx;
-		background: #FF9D72;
-	}
-
-	.summary-card-title-name {
-		height: 52rpx;
-		font-size: 38rpx;
-		color: #3C424A;
-		line-height: 52rpx;
-		margin-left: 14rpx;
-		font-weight: 600;
-	}
-
-	.summary-card-money {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		margin-top: 22rpx;
-	}
-
-	.summary-card-money-spend, .summary-card-money-income {
-		display: flex;
-		flex-direction: column;
-		width: 280rpx;
-		margin-left: 24rpx;
-	}
-
-	.summary-card-money-spend-title, .summary-card-money-income-title {
-		height: 34rpx;
-		font-size: 25rpx;
-		font-weight: 400;
-		color: #3C424A;
-		line-height: 34rpx;
-	}
-	
-	.summary-card-money-spend-number{
-		height: 61rpx;
-		font-size: 44rpx;
-		font-weight: 500;
-		color: #FE5250;
-		line-height: 61rpx;
-		margin-top: 8rpx;
-	}
-
-	.summary-card-money-income-number{
-		height: 61rpx;
-		font-size: 44rpx;
-		font-weight: 500;
-		color: #3C424A;
-		line-height: 61rpx;
-		margin-top: 8rpx;
-	}
-	
-	.summary-card-bg{
-		position: absolute;
-		right: 0;
-		bottom: 0;
-		width: 243rpx;
-		height: 243rpx;
-	}
-	
-	/* 列表 */
-	.list{
-		margin-top: 413rpx;
-		height: 150rpx;
-		width: 100vw;
-		padding: 33rpx;
-		background-color: #2C405A;
 	}
 </style>
