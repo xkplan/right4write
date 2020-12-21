@@ -57,9 +57,6 @@
 
 		<view v-if="isShowWriteBox" class="write-box-mask" @scroll.prevent>
 			<view class="write-box-wrap">
-				<!-- <text class="message-title" v-for="num in 30" @click.stop="messageTitleClick(num)" style="z-index: 9999;">
-					消息提示 {{num}}
-				</text> -->
 				<writebox class="write-box" style="z-index: 99999;" @writeboxclose="closeWriteBox()"></writebox>
 			</view>
 		</view>
@@ -134,7 +131,7 @@
 			}
 		},
 		onLoad() {
-			this.openWriteBox();
+			this.closeWriteBox();
 		},
 		methods: {
 			getScrollTop() { // 获取滚动条位置

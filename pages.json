@@ -14,13 +14,6 @@
 				"navigationBarTitleText": "uni-app",
 				"backgroundColor": "#F5F6F9"
 			}
-		}, {
-			"path": "pages/index/test",
-			"style": {
-				"transparentTitle": "always",
-				"navigationBarTitleText": "uni-app",
-				"backgroundColor": "#F5F6F9"
-			}
 		}
 	],
 	"globalStyle": {
