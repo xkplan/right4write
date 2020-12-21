@@ -1,5 +1,5 @@
 <template class="box">
-	<view class="container" style="display: flex;">
+	<view class="container" style="display: flex;" :class="{noScroll: isShowWriteBox}">
 		<view class="box-summary">
 			<text class="title-summary">统计</text>
 			<view class="summary-card">
@@ -21,7 +21,7 @@
 			</view>
 		</view>
 
-		<view class="list">
+		<view class="list" :class="{noScroll: isShowWriteBox}">
 			<view class="list-card" v-for="day in data">
 				<view class="list-card-title">
 					<view class="list-card-title-left">
@@ -52,12 +52,23 @@
 		<view class="tabBar">
 			<image src="~@/static/icon-list-selected.png" />
 			<image src="~@/static/icon-data.png" />
-			<image src="~@/static/icon-new.png" />
+			<image src="~@/static/icon-new.png" @click="openWriteBox()" />
+		</view>
+
+		<view v-if="isShowWriteBox" class="write-box-mask" @scroll.prevent>
+			<view class="write-box-wrap">
+				<!-- <text class="message-title" v-for="num in 30" @click.stop="messageTitleClick(num)" style="z-index: 9999;">
+					消息提示 {{num}}
+				</text> -->
+				<writebox class="write-box" style="z-index: 99999;" @writeboxclose="closeWriteBox()"></writebox>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import write from './write';
+
 	export default {
 		data() {
 			return {
@@ -118,14 +129,50 @@
 							money: "20.00"
 						}
 					]
-				}]
+				}],
+				isShowWriteBox: false
 			}
 		},
 		onLoad() {
-
+			this.openWriteBox();
 		},
 		methods: {
+			getScrollTop() { // 获取滚动条位置
+				var scrollTop = 0;
+				if (document.documentElement && document.documentElement.scrollTop) {
+					scrollTop = document.documentElement.scrollTop;
+				} else if (document.body) {
+					scrollTop = document.body.scrollTop;
+				}
+				return scrollTop;
+			},
+			openWriteBox() {
+				this.pageScrollYoffset = this.getScrollTop();
+				this.isShowWriteBox = true;
+			},
+			closeWriteBox() {
+				this.isShowWriteBox = false;
+			}
+		},
+		components: {
+			'writebox': write
+		},
+		watch: {
+			isShowWriteBox(newVal, oldVal) {
+				if (newVal == true) {
+					let cssStr = "overflow-y: hidden; height: 100%;";
+					document.getElementsByTagName('html')[0].style.cssText = cssStr;
+					document.body.style.cssText = cssStr;
+				} else {
+					let cssStr = "overflow-y: auto; height: auto;";
+					document.getElementsByTagName('html')[0].style.cssText = cssStr;
+					document.body.style.cssText = cssStr;
+				}
 
+				// 下面需要这两行代码，兼容不同浏览器
+				document.body.scrollTop = this.pageScrollYoffset;
+				window.scroll(0, this.pageScrollYoffset);
+			}
 		}
 	}
 </script>

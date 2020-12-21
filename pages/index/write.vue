@@ -3,7 +3,7 @@
 		<view class="topBar">
 			<view class="topBar-title">
 				<text class="topBar-title-name">添加记账</text>
-				<image class="topBar-title-fork" src="~@/static/index/fork.svg" mode="aspectFit" />
+				<image class="topBar-title-fork" src="~@/static/index/fork.svg" mode="aspectFit" @click="closeBox" />
 			</view>
 			<view class="topBar-subBar">
 				<text class="topBar-subBar-spend" :class="currentTab == 'spend' ? 'font-selected' : ''" v-on:click="switchTab('spend')">支出</text>
@@ -90,7 +90,6 @@
 
 <script>
 	export default {
-		props: [],
 		data() {
 			return {
 				currentTab: 'spend',
@@ -262,6 +261,9 @@
 					}
 					this.$data.money = im;
 				}
+			},
+			closeBox() {
+				this.$emit('writeboxclose');
 			}
 		},
 		mounted() {

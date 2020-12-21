@@ -88,10 +88,11 @@
 
 /* 类型列表 */
 .type-list {
-	/* margin-bottom: 630rpx; */
+	padding-bottom: 630rpx;
 	width: 750rpx;
 	display: flex;
 	justify-content: flex-start;
+	
 	flex-wrap: wrap;
 	position: absolute;
 	top: 280rpx;

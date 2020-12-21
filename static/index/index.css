@@ -199,21 +199,21 @@
 	background-color: rgba(0, 0, 0, 0.05);
 }
 
-.list-card-item-detail-wrap{
+.list-card-item-detail-wrap {
 	height: 100rpx;
 	display: flex;
 	align-items: center;
 	position: relative;
 }
 
-.list-card-item-detail-left{
+.list-card-item-detail-left {
 	display: flex;
 	flex-direction: column;
 	position: absolute;
 	left: 0;
 }
 
-.list-card-item-detail-left-name{
+.list-card-item-detail-left-name {
 	height: 34rpx;
 	font-size: 25rpx;
 	font-weight: 500;
@@ -221,7 +221,7 @@
 	line-height: 34rpx;
 }
 
-.list-card-item-detail-left-note{
+.list-card-item-detail-left-note {
 	height: 29rpx;
 	font-size: 21rpx;
 	font-weight: 500;
@@ -230,13 +230,13 @@
 
 }
 
-.list-card-item-detail-money{
+.list-card-item-detail-money {
 	position: absolute;
 	right: 0;
 }
 
 /* 底部导航栏 */
-.tabBar{
+.tabBar {
 	height: 104rpx;
 	width: 750rpx;
 	background-color: #FFFFFF;
@@ -248,7 +248,38 @@
 	align-items: center;
 }
 
-.tabBar image{
+.tabBar image {
 	height: 67rpx;
 	width: 67rpx;
+}
+
+/* 记账 */
+.noScroll {
+	/* 当前蒙层显示时生效 */
+	overflow-y: hidden;
+}
+
+.write-box-mask {
+	background-color: #F5F6F9;
+	display: flex !important;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 9999;
+	width: 100vw;
+	height: 100vh;
+	justify-content: center;
+	align-items: center;
+}
+
+.write-box-wrap {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+
+	width: 100vw;
+	height: 100vh;
+	overflow-y: scroll;
+	/* ios需要下面这个属性 */
+	-webkit-overflow-scrolling: touch;
 }
