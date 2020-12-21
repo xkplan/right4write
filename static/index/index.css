@@ -260,7 +260,7 @@
 }
 
 .write-box-mask {
-	background-color: #F5F6F9;
+	background-color: rgba(245, 246, 249, 0);
 	display: flex !important;
 	position: fixed;
 	top: 0;

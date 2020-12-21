@@ -12,7 +12,7 @@
 	flex-direction: column;
 	position: fixed;
 	left: 0;
-	top: 0;
+	top: -269rpx;
 	z-index: 99;
 }
 
@@ -95,7 +95,7 @@
 	
 	flex-wrap: wrap;
 	position: absolute;
-	top: 280rpx;
+	top: 100vh;
 }
 
 .type-list-item {
@@ -137,7 +137,7 @@
 	border-radius: 43rpx 43rpx 0rpx 0rpx;
 	position: fixed;
 	left: 0;
-	bottom: 0;
+	bottom: -596rpx;
 }
 
 .inbox-note {

@@ -55,7 +55,7 @@
 			<image src="~@/static/icon-new.png" @click="openWriteBox()" />
 		</view>
 
-		<view v-if="isShowWriteBox" class="write-box-mask" @scroll.prevent>
+		<view v-if="isShowWriteBox" class="write-box-mask" @scroll.prevent :animation="writeBoxMaskAnim">
 			<view class="write-box-wrap">
 				<writebox class="write-box" style="z-index: 99999;" @writeboxclose="closeWriteBox()"></writebox>
 			</view>
@@ -69,6 +69,7 @@
 	export default {
 		data() {
 			return {
+				writeBoxMaskAnim: {},
 				data: [{
 					time: "12/05",
 					totalSpend: "40.00",
@@ -132,6 +133,7 @@
 		},
 		onLoad() {
 			this.closeWriteBox();
+			// this.openWriteBox();
 		},
 		methods: {
 			getScrollTop() { // 获取滚动条位置
@@ -146,9 +148,25 @@
 			openWriteBox() {
 				this.pageScrollYoffset = this.getScrollTop();
 				this.isShowWriteBox = true;
+				let animation = uni.createAnimation({
+					duration: 600,
+					timingFunction: 'ease',
+				});
+				animation.backgroundColor('#F5F6F9').step();
+				this.$data.writeBoxMaskAnim = animation.export();
 			},
 			closeWriteBox() {
-				this.isShowWriteBox = false;
+				let animation = uni.createAnimation({
+					duration: 600,
+					timingFunction: 'ease',
+				});
+				animation.opacity(0).step();
+				this.$data.writeBoxMaskAnim = animation.export();
+
+				let that = this;
+				setTimeout(function() {
+					that.isShowWriteBox = false;
+				}, 600);
 			}
 		},
 		components: {

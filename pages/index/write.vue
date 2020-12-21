@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="topBar">
+		<view class="topBar" :animation="topBarSlideAnim">
 			<view class="topBar-title">
 				<text class="topBar-title-name">添加记账</text>
 				<image class="topBar-title-fork" src="~@/static/index/fork.svg" mode="aspectFit" @click="closeBox" />
@@ -13,14 +13,14 @@
 			<view class="topBar-subBar-income-underLine" v-if="currentTab == 'income'"></view>
 		</view>
 
-		<view class="type-list">
+		<view class="type-list" :animation="typeListSlideAnim">
 			<view class="type-list-item" v-for="type in typeList">
 				<image class="type-list-item-icon" src="~@/static/icon-data-selected.png" :src="type.icon" />
 				<text class="type-list-item-name">{{type.name}}</text>
 			</view>
 		</view>
 
-		<view class="inbox">
+		<view class="inbox" :animation="inboxSlideAnim">
 			<view class="inbox-note">
 				<picker class="inbox-note-datetime" mode="date" @change="inputDatetime">{{datetime}}</picker>
 				<input class="inbox-note-content" placeholder="填写备注" :value="note" @input="inputNote" />
@@ -92,6 +92,9 @@
 	export default {
 		data() {
 			return {
+				inboxSlideAnim: {},
+				topBarSlideAnim: {},
+				typeListSlideAnim: {},
 				currentTab: 'spend',
 				money: "",
 				note: "",
@@ -264,10 +267,34 @@
 			},
 			closeBox() {
 				this.$emit('writeboxclose');
+				let animation = uni.createAnimation({
+					duration: 600,
+					timingFunction: 'ease',
+				});
+				animation.bottom('-596rpx').step();
+				this.$data.inboxSlideAnim = animation.export();
+
+				animation.top('-269rpx').step();
+				this.$data.topBarSlideAnim = animation.export();
+
+				animation.top('100vh').step();
+				this.$data.typeListSlideAnim = animation.export();
 			}
 		},
 		mounted() {
 			this.refreshTypeList();
+			let animation = uni.createAnimation({
+				duration: 600,
+				timingFunction: 'ease',
+			});
+			animation.bottom(0).step();
+			this.$data.inboxSlideAnim = animation.export();
+
+			animation.top(0).step();
+			this.$data.topBarSlideAnim = animation.export();
+
+			animation.top('280rpx').step();
+			this.$data.typeListSlideAnim = animation.export();
 		}
 	}
 </script>
