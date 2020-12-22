@@ -1,5 +1,9 @@
-.container{
+.container {
 	position: relative;
+	height: 100vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
 }
 
 .topBar {
@@ -92,7 +96,7 @@
 	width: 750rpx;
 	display: flex;
 	justify-content: flex-start;
-	
+
 	flex-wrap: wrap;
 	position: absolute;
 	top: 100vh;
@@ -219,18 +223,18 @@
 	background: #F1F5F8;
 }
 
-.inbox-keyboard-row-item-backspace{
+.inbox-keyboard-row-item-backspace {
 	background: #f1f5f8;
 }
 
-.inbox-keyboard-row-item-backspace-selected{
+.inbox-keyboard-row-item-backspace-selected {
 	background: #FF9D72;
 }
 
-.inbox-keyboard-row-item-submit{
+.inbox-keyboard-row-item-submit {
 	background: #FF9D72;
 }
 
-.inbox-keyboard-row-item-submit-selected{
+.inbox-keyboard-row-item-submit-selected {
 	background: #eb875c;
 }

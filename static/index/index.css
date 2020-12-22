@@ -110,7 +110,6 @@
 
 .list-card {
 	width: 683rpx;
-	height: 319rpx;
 	background: #FFFFFF;
 	box-shadow: 0rpx -2rpx 15rpx 10rpx rgba(0, 0, 0, 0.02);
 	border-radius: 17rpx;
@@ -282,4 +281,7 @@
 	overflow-y: scroll;
 	/* ios需要下面这个属性 */
 	-webkit-overflow-scrolling: touch;
+}
+
+.write-box{
 }

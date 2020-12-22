@@ -96,6 +96,7 @@
 				topBarSlideAnim: {},
 				typeListSlideAnim: {},
 				currentTab: 'spend',
+				catagory: '吃饭',
 				money: "",
 				note: "",
 				datetime: "2020/12/20",
@@ -103,34 +104,6 @@
 				spendTypes: [{
 						icon: "/static/type-icon/hamburger.svg",
 						name: "吃饭"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
-						name: "游戏"
 					},
 					{
 						icon: "/static/icon-data-selected.png",
@@ -244,7 +217,15 @@
 						this.$data.money = im.slice(0, im.length - 1);
 					}
 				} else if (ch == 'ok') {
-					console.log(this.$data.note)
+					let that = this;
+					this.$emit('addNewRecord', {
+						datetime: that.$data.datetime,
+						note: that.$data.note,
+						money: parseFloat(that.$data.money),
+						type: that.$data.currentTab,
+						catagory: that.$data.catagory
+					});
+					this.closeBox();
 				} else {
 					if (ch == '00') {
 						if (im.length == '0') ch = '0';
@@ -285,7 +266,7 @@
 			this.refreshTypeList();
 			let animation = uni.createAnimation({
 				duration: 600,
-				timingFunction: 'ease',
+				timingFunction: 'ease'
 			});
 			animation.bottom(0).step();
 			this.$data.inboxSlideAnim = animation.export();
@@ -293,6 +274,10 @@
 			animation.top(0).step();
 			this.$data.topBarSlideAnim = animation.export();
 
+			animation = uni.createAnimation({
+				duration: 600,
+				timingFunction: 'ease'
+			});
 			animation.top('280rpx').step();
 			this.$data.typeListSlideAnim = animation.export();
 		}

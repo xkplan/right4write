@@ -14,4 +14,7 @@
 
 <style>
 	/*每个页面公共css */
+	.uni-picker-container {
+		z-index: 999999;
+	}
 </style>
