@@ -161,7 +161,7 @@
 				}
 				item.list.push({
 					icon: "",
-					name: "午餐",
+					name: data.catagory,
 					note: data.note,
 					type: data.type,
 					money: data.money

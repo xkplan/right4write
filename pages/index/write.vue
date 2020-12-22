@@ -14,9 +14,9 @@
 		</view>
 
 		<view class="type-list" :animation="typeListSlideAnim">
-			<view class="type-list-item" v-for="type in typeList">
-				<image class="type-list-item-icon" src="~@/static/icon-data-selected.png" :src="type.icon" />
-				<text class="type-list-item-name">{{type.name}}</text>
+			<view class="type-list-item" v-for="(type, index) in typeList" @click="select(index)">
+				<image class="type-list-item-icon" :src="selected == index ? type.selectedIcon: type.icon" />
+				<text class="type-list-item-name" :class="{'font-selected': selected == index}">{{type.name}}</text>
 			</view>
 		</view>
 
@@ -96,78 +96,97 @@
 				topBarSlideAnim: {},
 				typeListSlideAnim: {},
 				currentTab: 'spend',
-				catagory: '吃饭',
+				selected: undefined,
 				money: "",
 				note: "",
 				datetime: "2020/12/20",
 				typeList: [],
-				spendTypes: [{
+				spendTypes: [
+					{
 						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "吃饭"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					},
 					{
-						icon: "/static/icon-data-selected.png",
+						icon: "/static/type-icon/hamburger.svg",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "游戏"
 					}
 				],
-				incomeTypes: [{
-						icon: "/static/icon-list.png",
+				incomeTypes: [
+					{
+						icon: "/static/icon-data.png",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "红包"
 					},
 					{
 						icon: "/static/icon-data.png",
-						name: "利息"
-					},
-					{
-						icon: "/static/icon-data-selected.png",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "利息"
 					},
 					{
 						icon: "/static/icon-data.png",
+						selectedIcon: "/static/icon-data-selected.png",
+						name: "利息"
+					},
+					{
+						icon: "/static/icon-data.png",
+						selectedIcon: "/static/icon-data-selected.png",
 						name: "利息"
 					}
 				],
@@ -188,6 +207,10 @@
 				this.$data.currentTab = name;
 				this.$data.typeList.length = 0;
 				this.refreshTypeList();
+				this.$data.selected = undefined;
+			},
+			select(index){
+				this.$data.selected = index;
 			},
 			inputDatetime(e) {
 				let date = new Date(e.target.value);
@@ -223,7 +246,7 @@
 						note: that.$data.note,
 						money: parseFloat(that.$data.money),
 						type: that.$data.currentTab,
-						catagory: that.$data.catagory
+						catagory: that.$data.typeList[this.$data.selected].name
 					});
 					this.closeBox();
 				} else {
