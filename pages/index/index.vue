@@ -71,7 +71,8 @@
 			return {
 				writeBoxMaskAnim: {},
 				data: {},
-				isShowWriteBox: false
+				isShowWriteBox: false,
+				listScrollTop: undefined
 			}
 		},
 		onLoad() {
@@ -80,31 +81,34 @@
 			this.loadData();
 		},
 		methods: {
-			getScrollTop() { // 获取滚动条位置
-				var scrollTop = 0;
+			refreshScrollTop() { // 刷新滚动条位置(解决滚动事件穿透的问题,在关闭记账组件时把页面滚动到打开时的位置)
 				// #ifdef H5
-				console.log("h5")
+				console.log("h5");
+				let scrollTop = 0;
 				if (document.documentElement && document.documentElement.scrollTop) {
 					scrollTop = document.documentElement.scrollTop;
 				} else if (document.body) {
 					scrollTop = document.body.scrollTop;
 				}
+				this.$data.listScrollTop = scrollTop;
+				this.pageScrollYoffset = this.$data.listScrollTop;
 				// #endif
 
 				// #ifndef H5
 				console.log("not h5");
+				let that = this;
 				let query = uni.createSelectorQuery().in(this);
 				query.selectViewport('.list').fields({
 					scrollOffset: true
 				}, function(data) {
-					screenTop = data.scrollTop;
+					that.$data.listScrollTop = data.scrollTop;
+					that.pageScrollYoffset = that.$data.listScrollTop;
 				}).exec();
 				// #endif
-				return scrollTop;
 			},
 			openWriteBox() {
-				console.log(this.pageScrollYoffset);
-				this.pageScrollYoffset = this.getScrollTop();
+				this.refreshScrollTop();
+
 				this.isShowWriteBox = true;
 				let animation = uni.createAnimation({
 					duration: 600,
@@ -125,6 +129,13 @@
 				setTimeout(function() {
 					that.isShowWriteBox = false;
 				}, 600);
+
+				console.log("reset scrollTop: " + this.$data.listScrollTop);
+				this.pageScrollYoffset = this.$data.listScrollTop;
+				uni.pageScrollTo({
+					scrollTop: that.$data.listScrollTop,
+					duration: 0
+				});
 			},
 			loadData() {
 				// #ifdef H5
@@ -175,41 +186,6 @@
 		},
 		watch: {
 			isShowWriteBox(newVal, oldVal) {
-				// #ifdef H5
-				if (newVal == true) {
-					let cssStr = "overflow-y: hidden; height: 100%;";
-					document.getElementsByTagName('html')[0].style.cssText = cssStr;
-					document.body.style.cssText = cssStr;
-				} else {
-					let cssStr = "overflow-y: auto; height: auto;";
-					document.getElementsByTagName('html')[0].style.cssText = cssStr;
-					document.body.style.cssText = cssStr;
-				}
-				// 下面需要这两行代码，兼容不同浏览器
-				document.body.scrollTop = this.pageScrollYoffset;
-				window.scroll(0, this.pageScrollYoffset);
-				// #endif
-
-				// #ifndef H5
-
-				let query = uni.createSelectorQuery().in(this);
-				query.selectViewport('html').fields({
-					scrollOffset: true
-				}, function(data) {
-					console.log("得到布局位置信息" + JSON.stringify(data));
-					console.log("节点离页面顶部的距离为" + data.scrollTop);
-				}).exec();
-
-				if (newVal == true) {
-					let cssStr = "overflow-y: hidden; height: 100%;";
-					document.getElementsByTagName('html')[0].style.cssText = cssStr;
-					document.body.style.cssText = cssStr;
-				} else {
-					let cssStr = "overflow-y: auto; height: auto;";
-					document.getElementsByTagName('html')[0].style.cssText = cssStr;
-					document.body.style.cssText = cssStr;
-				}
-				// #endif
 			}
 		}
 	}
