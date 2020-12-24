@@ -1,5 +1,8 @@
 <script>
 	export default {
+		globalData: {
+			data: {}
+		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},

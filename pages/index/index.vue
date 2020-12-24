@@ -1,39 +1,20 @@
 <template class="box">
 	<view class="container" style="display: flex;" :class="{noScroll: isShowWriteBox}">
-		<view class="box-summary">
-			<text class="title-summary">统计</text>
-			<view class="summary-card">
-				<view class="summary-card-title">
-					<view class="summary-card-title-split"></view>
-					<text class="summary-card-title-name">本月概览</text>
-				</view>
-				<view class="summary-card-money">
-					<view class="summary-card-money-spend">
-						<text class="summary-card-money-spend-title">支出</text>
-						<text class="summary-card-money-spend-number">76.90</text>
-					</view>
-					<view class="summary-card-money-income">
-						<text class="summary-card-money-income-title">收入</text>
-						<text class="summary-card-money-income-number">0.90</text>
-					</view>
-				</view>
-				<image class="summary-card-bg" mode="aspectFit" src="~@/static/index/summary-bg.png"></image>
-			</view>
-		</view>
+		<summaryBox :spend="currentMonthSpend" :income="currentMonthIncome"></summaryBox>
 
 		<scroll-view class="list" :class="{noScroll: isShowWriteBox}">
-			<view class="list-card" v-for="(day, index) in data" :key="index">
+			<view class="list-card" v-for="(day, dayName) in data" :key="dayName">
 				<view class="list-card-title">
 					<view class="list-card-title-left">
 						<view class="list-card-title-left-split"></view>
-						<text class="list-card-title-left-name">{{index.slice(5)}}</text>
+						<text class="list-card-title-left-name">{{dayName.slice(5)}}</text>
 					</view>
 					<view class="list-card-title-right">
 						<text class="list-card-title-right-income">+{{day.totalIncome}}</text>
 						<text class="list-card-title-right-spend">-{{day.totalSpend}}</text>
 					</view>
 				</view>
-				<view class="list-card-item" v-for="t in day.list">
+				<view class="list-card-item" v-for="(t, ti) in day.list" @click="clickItem(dayName, ti)">
 					<image class="list-card-item-icon" src="~@/static/logo.png" mode="widthFix" />
 					<view class="list-card-item-detail">
 						<view class="list-card-item-detail-split"></view>
@@ -49,35 +30,58 @@
 			</view>
 		</scroll-view>
 
-		<view class="tabBar">
-			<image src="~@/static/icon-list-selected.png" />
-			<image src="~@/static/icon-data.png" />
-			<image src="~@/static/icon-new.png" @click="openWriteBox()" />
-		</view>
+		<tabBar @openWriteBox="openWriteBox" tab="list"></tabBar>
 
 		<view v-if="isShowWriteBox" class="write-box-mask" @scroll.prevent :animation="writeBoxMaskAnim">
 			<view class="write-box-wrap">
 				<writebox class="write-box" @writeboxclose="closeWriteBox()" @addNewRecord="addNewRecord"></writebox>
 			</view>
 		</view>
+
+		<editBox v-if="isShowEditBox" class="editBox" :item="editItem" :datetime="editDatetime"
+		@closeEditBox="closeEditBox" @openEditDetailBox="openEditDetailBox" @deleteItem="deleteItem"></editBox>
 	</view>
 </template>
 
 <script>
 	import write from './write';
+	import tabBar from './tabBar';
+	import summaryBox from './summaryBox';
+	import editBox from './editBox';
 
 	export default {
 		data() {
 			return {
 				writeBoxMaskAnim: {},
+				/*
+				data: {
+					"2020/12/05": {
+						totalSpend: "40.00",
+						totalIncome: "0.00",
+						list: [{
+								icon: "",
+								name: "吃饭",
+								note: "备注xxxx",
+								type: "spned",
+								money: "20.00"
+							}
+						]
+					}
+				}
+				*/
 				data: {},
+				currentMonthSpend: 0,
+				currentMonthIncome: 0,
 				isShowWriteBox: false,
-				listScrollTop: undefined
+				listScrollTop: 0,
+				isShowEditBox: false,
+				editItem: {},
+				editDatetime: "2020/02/02",
+				editItemIndex: undefined
 			}
 		},
 		onLoad() {
 			this.closeWriteBox();
-			// this.openWriteBox();
 			this.loadData();
 		},
 		methods: {
@@ -151,7 +155,18 @@
 					success: function(data) {
 						console.log("success load data.")
 						console.log(data.data);
+						that.$data.data = getApp().globalData.data;
 						that.$data.data = data.data;
+
+						let date = new Date();
+						let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+						for (let key in that.$data.data) {
+							if (key.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+								console.log(JSON.stringify(that.$data.data[key]))
+								that.$data.currentMonthSpend += that.$data.data[key].totalSpend;
+								that.$data.currentMonthIncome += that.$data.data[key].totalIncome;
+							}
+						}
 					}
 				});
 			},
@@ -167,8 +182,10 @@
 				let item = store[data.datetime];
 				if (data.type == 'spend') {
 					item.totalSpend += data.money;
+					this.$data.currentMonthSpend += data.money;
 				} else if (data.type == 'income') {
 					item.totalIncome += data.money;
+					this.$data.currentMonthIncome += data.money;
 				}
 				item.list.push({
 					icon: "",
@@ -179,14 +196,34 @@
 				});
 				uni.setStorageSync("data", this.$data.data);
 				this.closeWriteBox();
+			},
+			clickItem(day, index) {
+				let dayData = this.$data.data[day];
+				if (!dayData) return;
+				console.log(day + " " + JSON.stringify(dayData))
+				this.$data.editItem = dayData.list[index];
+				this.$data.editDatetime = day;
+				this.$data.isShowEditBox = true;
+				this.$data.editItemIndex = index;
+			},
+			openEditDetailBox(){
+				
+			},
+			closeEditBox(){
+				this.$data.isShowEditBox = false;
+			},
+			deleteItem(){
+				
 			}
 		},
 		components: {
-			'writebox': write
+			'writebox': write,
+			'tabBar': tabBar,
+			'summaryBox': summaryBox,
+			'editBox': editBox
 		},
 		watch: {
-			isShowWriteBox(newVal, oldVal) {
-			}
+			isShowWriteBox(newVal, oldVal) {}
 		}
 	}
 </script>

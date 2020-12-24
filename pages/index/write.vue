@@ -96,7 +96,7 @@
 				topBarSlideAnim: {},
 				typeListSlideAnim: {},
 				currentTab: 'spend',
-				selected: undefined,
+				selected: 0,
 				money: "",
 				note: "",
 				datetime: "2020/12/20",
@@ -207,7 +207,7 @@
 				this.$data.currentTab = name;
 				this.$data.typeList.length = 0;
 				this.refreshTypeList();
-				this.$data.selected = undefined;
+				this.$data.selected = 0;
 			},
 			select(index){
 				this.$data.selected = index;
@@ -240,6 +240,14 @@
 						this.$data.money = im.slice(0, im.length - 1);
 					}
 				} else if (ch == 'ok') {
+					if(!this.$data.money){
+						uni.showToast({
+							title: "请输入正确的金额",
+							icon: "none"
+						});
+						return;
+					}
+					
 					let that = this;
 					this.$emit('addNewRecord', {
 						datetime: that.$data.datetime,
