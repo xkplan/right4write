@@ -23,7 +23,8 @@
 								<text class="list-card-item-detail-left-name">{{t.name}}</text>
 								<text class="list-card-item-detail-left-note">{{t.note}}</text>
 							</view>
-							<text class="list-card-item-detail-money">{{t.money}}</text>
+							<text v-if="t.type == 'spend'" class="list-card-item-detail-money" style="color: #FE5250;">-{{t.money}}</text>
+							<text v-if="t.type == 'income'" class="list-card-item-detail-money" style="color: #3C424A;">+{{t.money}}</text>
 						</view>
 					</view>
 				</view>
@@ -38,8 +39,8 @@
 			</view>
 		</view>
 
-		<editBox v-if="isShowEditBox" class="editBox" :item="editItem" :datetime="editDatetime"
-		@closeEditBox="closeEditBox" @openEditDetailBox="openEditDetailBox" @deleteItem="deleteItem"></editBox>
+		<editBox v-if="isShowEditBox" class="editBox" :item="editItem" :datetime="editDatetime" @closeEditBox="closeEditBox"
+		 @openEditDetailBox="openEditDetailBox" @deleteItem="deleteItem"></editBox>
 	</view>
 </template>
 
@@ -206,14 +207,14 @@
 				this.$data.isShowEditBox = true;
 				this.$data.editItemIndex = index;
 			},
-			openEditDetailBox(){
-				
+			openEditDetailBox() {
+
 			},
-			closeEditBox(){
+			closeEditBox() {
 				this.$data.isShowEditBox = false;
 			},
-			deleteItem(){
-				
+			deleteItem() {
+
 			}
 		},
 		components: {

@@ -7,7 +7,8 @@
 			</view>
 			<view class="edit-box-row">
 				<text class="edit-box-row-name">金额</text>
-				<text class="edit-box-row-data">{{item.money}}</text>
+				<text v-if="item.type == 'spend'" class="edit-box-row-data" style="color: #FE5250;">-{{item.money}}</text>
+				<text v-if="item.type == 'income'" class="edit-box-row-data" style="color: #3C424A;">+{{item.money}}</text>
 			</view>
 			<view class="edit-box-row">
 				<text class="edit-box-row-name">类型</text>
@@ -31,14 +32,14 @@
 	export default {
 		props: ['item', 'datetime'],
 		methods: {},
-		methods:{
-			closeBox(){
+		methods: {
+			closeBox() {
 				this.$emit('closeEditBox');
 			},
-			openDetailBox(){
+			openDetailBox() {
 				this.$emit('openEditDetailBox');
 			},
-			deleteItem(){
+			deleteItem() {
 				this.$emit('deleteItem');
 			}
 		}
