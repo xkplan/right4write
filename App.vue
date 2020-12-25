@@ -2,31 +2,21 @@
 	export default {
 		globalData: {
 			/*
-			data: {
-				"2020/12/05": {
-					totalSpend: "40.00",
-					totalIncome: "0.00",
-					list: [
-						{
-							id: 0,
-							icon: "",
-							name: "吃饭",
-							note: "备注xxxx",
-							type: "spned",
-							money: "20.00"
-						}
-					]
+			data: [
+				{
+					id: 0,
+					icon: "",
+					name: "吃饭",
+					note: "备注xxxx",
+					type: "spned",
+					money: "20.00"
 				}
-			},
-			dataMap: {
-				"0": {
-					datetime: "2020/12/05",
-					index: 0
-				}
-			}
+			],
+			dataMap: new Map()
 			*/
-			data: {},
-			dataMap: {},
+			data: [],
+			//从ID映射到data索引下标
+			// dataMap: new Map(),
 			autoIncrementId: 0,
 			spendTypes: [{
 					icon: "/static/type-icon/hamburger.svg",
@@ -74,17 +64,10 @@
 				console.log(JSON.stringify(res));
 				this.globalData.data = res;
 				for (let i in this.globalData.data) {
-					console.log(i)
-				}
-				for (let day in this.globalData.data) {
-					for (let i in this.globalData.data[day].list) {
-						let item = this.globalData.data[day].list[i];
-						this.globalData.autoIncrementId = Math.max(this.globalData.autoIncrementId, item.id) + 1;
-						this.globalData.dataMap[item.id] = {
-							datetime: day,
-							index: i
-						};
-					}
+					let record = this.globalData.data[i];
+					console.log(JSON.stringify(record))
+					this.globalData.autoIncrementId = Math.max(this.globalData.autoIncrementId, record.id) + 1;
+					// this.globalData.dataMap.set(record.id, i);
 				}
 				console.log("当前自增ID为" + this.globalData.autoIncrementId);
 			}

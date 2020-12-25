@@ -3,18 +3,18 @@
 		<summaryBox :spend="currentMonthSpend.toFixed(2)" :income="currentMonthIncome.toFixed(2)"></summaryBox>
 
 		<scroll-view class="list" :class="{noScroll: isShowWriteBox}">
-			<view class="list-card" v-for="(day, dayName) in mirrorData" :key="dayName">
+			<view class="list-card" v-for="day in mirrorData">
 				<view class="list-card-title">
 					<view class="list-card-title-left">
 						<view class="list-card-title-left-split"></view>
-						<text class="list-card-title-left-name">{{dayName.slice(5)}}</text>
+						<text class="list-card-title-left-name">{{day.datetime.slice(5)}}</text>
 					</view>
 					<view class="list-card-title-right">
 						<text class="list-card-title-right-income">+{{day.totalIncome.toFixed(2)}}</text>
 						<text class="list-card-title-right-spend">-{{day.totalSpend.toFixed(2)}}</text>
 					</view>
 				</view>
-				<view class="list-card-item" v-for="(t, ti) in day.list" @click="clickItem(dayName, ti)">
+				<view class="list-card-item" v-for="(t, ti) in day.list" @click="clickItem(day.datetime, ti)">
 					<image class="list-card-item-icon" src="~@/static/logo.png" mode="widthFix" />
 					<view class="list-card-item-detail">
 						<view class="list-card-item-detail-split"></view>
@@ -59,7 +59,9 @@
 					"2020/12/05": {
 						totalSpend: "40.00",
 						totalIncome: "0.00",
-						list: [{
+						list: [
+							{
+								id: 0
 								icon: "",
 								name: "吃饭",
 								note: "备注xxxx",
@@ -69,8 +71,28 @@
 						]
 					}
 				}
+				mirrorData: [
+					{
+						datetime: "2020/12/05",
+						totalSpend: "40.00",
+						totalIncome: "0.00",
+						list: [
+							{
+								id: 0
+								icon: "",
+								name: "吃饭",
+								note: "备注xxxx",
+								type: "spned",
+								money: "20.00",
+								datetime: "2020/12/05"
+							}
+						]
+					}
+				]
 				*/
-				mirrorData: {},
+				mirrorData: [],
+				//从日期到mirrorData数组下标的映射
+				mirrorDataMap: new Map(),
 				editRecord: undefined,
 				currentMonthSpend: 0,
 				currentMonthIncome: 0,
@@ -82,8 +104,111 @@
 		onLoad() {
 			this.closeWriteBox();
 			this.loadData();
+			// uni.setStorageSync("data", "");
 		},
 		methods: {
+			doSaveData() {
+				uni.setStorage({
+					key: 'data',
+					data: getApp().globalData.data,
+					success: function() {
+						console.log('succed save data.');
+					}
+				});
+			},
+			doAddRecord(record, saveGlobal = true) { //添加一条记录，保证时间顺序
+				if (saveGlobal) {
+					getApp().globalData.data.push(record);
+					this.doSaveData();
+				}
+				let dayRecords;
+				if (this.mirrorDataMap.get(record.datetime) == undefined) { //不存在当天的统计数据则初始化
+					let i = 0;
+					for (; i < this.mirrorData.length; i++) {
+						if (this.mirrorData[i].dateTime < record.datetime) break;
+					}
+					dayRecords = {
+						datetime: record.datetime,
+						totalSpend: 0,
+						totalIncome: 0,
+						list: []
+					};
+					this.mirrorData.splice(i, 0, dayRecords);
+					this.mirrorDataMap.set(record.datetime, i);
+					i++;
+					for (; i < this.mirrorData.length; i++) {
+						console.log("log")
+						this.mirrorDataMap.set(this.mirrorData[i].datetime, this.mirrorDataMap.get(this.mirrorData[i].datetime) + 1);
+					}
+				} else dayRecords = this.mirrorData[this.mirrorDataMap.get(record.datetime)];
+				//将数据写入统计数据
+				dayRecords.list.push(record);
+				if (record.type == 'spend') {
+					dayRecords.totalSpend += record.money;
+
+					let date = new Date();
+					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+						this.currentMonthSpend += record.money;
+					}
+				} else if (record.type == 'income') {
+					dayRecords.totalIncome += record.money;
+					this.currentMonthIncome += record.money;
+
+					let date = new Date();
+					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+						this.currentMonthIncome += record.money;
+					}
+				}
+			},
+			doDeleteRecord(recordId, save = true) { //删除一条记录，如果删除后当天数据为空则清除当天数据
+				let originData = getApp().globalData.data;
+				let i = 0;
+				for (; i < originData.length; i++) {
+					if (originData[i].id == recordId) break;
+				}
+				if (i == originData.length) {
+					console.log("不存在 ID 为 " + recordId + "的数据，删除失败！");
+					return;
+				}
+				let record = originData.splice(i, 1)[0];
+				if (save) this.doSaveData();
+				console.log("删除记录：" + JSON.stringify(record));
+				//删除缓存
+				let dayRecords = this.mirrorData[this.mirrorDataMap.get(record.datetime)];
+				i = 0;
+				for (; i < dayRecords.list.length; i++) {
+					if (dayRecords.list[i].id == recordId) {
+						break;
+					}
+				}
+				if (i == dayRecords.list.length) return;
+				record = dayRecords.list.splice(i, 1)[0];
+				if (record.type == 'spend') {
+					dayRecords.totalSpend -= record.money;
+
+					let date = new Date();
+					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+						this.currentMonthSpend -= record.money;
+					}
+				} else if (record.type == 'income') {
+					dayRecords.totalIncome -= record.money;
+
+					let date = new Date();
+					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+						this.currentMonthIncome -= record.money;
+					}
+				}
+
+				if (dayRecords.list.length == 0) {
+					//删除后清除当天统计数据
+					this.mirrorData.splice(this.mirrorDataMap.get(record.datetime), 1);
+					this.mirrorDataMap.delete(record.datetime);
+				}
+			},
 			refreshScrollTop() { // 刷新滚动条位置(解决滚动事件穿透的问题,在关闭记账组件时把页面滚动到打开时的位置)
 				// #ifdef H5
 				console.log("h5");
@@ -153,12 +278,10 @@
 
 				let date = new Date();
 				let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
-				this.mirrorData = getApp().globalData.data;
-				for (let key in this.mirrorData) {
-					if (key.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
-						this.$data.currentMonthSpend += this.mirrorData[key].totalSpend;
-						this.$data.currentMonthIncome += this.mirrorData[key].totalIncome;
-					}
+				let originData = getApp().globalData.data;
+				for (let record of originData) {
+					//映射日期到数组下标
+					this.doAddRecord(record, false);
 				}
 				console.log("列表页预处理数据完成");
 			},
@@ -168,6 +291,7 @@
 					this.mirrorData[rec.datetime] = {
 						totalSpend: 0,
 						totalIncome: 0,
+						datetime: rec.datetime,
 						list: []
 					};
 				}
@@ -175,46 +299,23 @@
 				console.log(JSON.stringify(rec))
 				if (rec.id) {
 					//编辑
-					let info = getApp().globalData.dataMap[rec.id];
-					let item = getApp().globalData.data[info.datetime].list[info.index];
-					item.icon = rec.icon;
-					item.catagory = rec.catagory;
-					item.note = rec.note;
-					item.type = rec.type;
-					item.money = rec.money;
-					item.datetime = rec.datetime;
-					if (info.datetime != rec.datetime) {
-						//更改日期
-						item = this.mirrorData[info.datetime].list.splice(info.index, 1);
-						console.log(JSON.stringify(info));
-						console.log(JSON.stringify(item));
-						// this.mirrorData[rec.datetime].list.push(item);
-						// info.datetime = rec.datetime;
-						// info.index = this.mirrorData[rec.datetime].list.length - 1;
-					}
+
+					let record = {
+						id: rec.id,
+						catagory: rec.catagory,
+						note: rec.note,
+						type: rec.type,
+						money: rec.money,
+						datetime: rec.datetime
+					};
+
+					this.doDeleteRecord(rec.id, false);
+					this.doAddRecord(record);
+
 					console.log("修改一条记录：" + JSON.stringify(this.item));
 				} else {
 					//添加
-					let item = this.mirrorData[rec.datetime];
-					if (rec.type == 'spend') {
-						item.totalSpend += rec.money;
-
-						let date = new Date();
-						let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
-						if (rec.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
-							this.$data.currentMonthSpend += rec.money;
-						}
-					} else if (rec.type == 'income') {
-						item.totalIncome += rec.money;
-						this.$data.currentMonthIncome += rec.money;
-
-						let date = new Date();
-						let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
-						if (rec.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
-							this.$data.currentMonthIncome += rec.money;
-						}
-					}
-					let addRecord = {
+					let record = {
 						id: getApp().globalData.autoIncrementId++,
 						icon: "",
 						catagory: rec.catagory,
@@ -223,20 +324,15 @@
 						money: rec.money,
 						datetime: rec.datetime
 					};
-					item.list.push(addRecord);
-					getApp().globalData.dataMap[addRecord.id] = {
-						datetime: addRecord.datetime,
-						index: item.list.length - 1
-					};
-					console.log("添加一条记录：" + JSON.stringify(addRecord));
+					this.doAddRecord(record, true);
+					console.log("添加一条记录：" + JSON.stringify(record));
 				}
-				uni.setStorageSync("data", this.mirrorData);
+				uni.setStorageSync("data", getApp().globalData.data);
 				this.closeWriteBox();
 			},
 			clickItem(day, index) {
-				let dayData = this.mirrorData[day];
+				let dayData = this.mirrorData[this.mirrorDataMap.get(day)];
 				if (!dayData) return;
-				console.log(day + " " + JSON.stringify(dayData))
 				this.editRecord = dayData.list[index];
 				this.editRecord["datetime"] = day;
 				if (this.editRecord.type == 'spend') {
@@ -267,13 +363,8 @@
 			},
 			deleteItem() {
 				//删除
-				let info = getApp().globalData.dataMap[this.editRecord.id];
-				this.mirrorData[info.datetime].list.splice(info.index, 1);
-				if(this.mirrorData[info.datetime].list.length == 0){
-					this.mirrorData.delete(info.datetime);
-				}
+				this.doDeleteRecord(this.editRecord.id);
 				this.isShowEditBox = false;
-				uni.setStorageSync("data", this.mirrorData);
 			}
 		},
 		components: {
