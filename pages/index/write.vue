@@ -147,7 +147,7 @@
 			},
 			inputDatetime(e) {
 				let date = new Date(e.target.value);
-				this.record.datetime = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+				this.record.datetime = date.format("yyyy/MM/dd");
 			},
 			inputNote(e) {
 				this.record.note = e.target.value;

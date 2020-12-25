@@ -125,7 +125,7 @@
 				if (this.mirrorDataMap.get(record.datetime) == undefined) { //不存在当天的统计数据则初始化
 					let i = 0;
 					for (; i < this.mirrorData.length; i++) {
-						if (this.mirrorData[i].dateTime < record.datetime) break;
+						if (this.mirrorData[i].datetime < record.datetime) break;
 					}
 					dayRecords = {
 						datetime: record.datetime,
@@ -137,7 +137,6 @@
 					this.mirrorDataMap.set(record.datetime, i);
 					i++;
 					for (; i < this.mirrorData.length; i++) {
-						console.log("log")
 						this.mirrorDataMap.set(this.mirrorData[i].datetime, this.mirrorDataMap.get(this.mirrorData[i].datetime) + 1);
 					}
 				} else dayRecords = this.mirrorData[this.mirrorDataMap.get(record.datetime)];
@@ -146,8 +145,7 @@
 				if (record.type == 'spend') {
 					dayRecords.totalSpend += record.money;
 
-					let date = new Date();
-					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					let currentMonthPrefix = new Date().format("yyyy/MM/");
 					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
 						this.currentMonthSpend += record.money;
 					}
@@ -155,8 +153,7 @@
 					dayRecords.totalIncome += record.money;
 					this.currentMonthIncome += record.money;
 
-					let date = new Date();
-					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					let currentMonthPrefix = new Date().format("yyyy/MM/");
 					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
 						this.currentMonthIncome += record.money;
 					}
@@ -188,16 +185,14 @@
 				if (record.type == 'spend') {
 					dayRecords.totalSpend -= record.money;
 
-					let date = new Date();
-					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					let currentMonthPrefix = new Date().format("yyyy/MM/");
 					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
 						this.currentMonthSpend -= record.money;
 					}
 				} else if (record.type == 'income') {
 					dayRecords.totalIncome -= record.money;
 
-					let date = new Date();
-					let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+					let currentMonthPrefix = new Date().format("yyyy/MM/");
 					if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
 						this.currentMonthIncome -= record.money;
 					}
@@ -276,8 +271,7 @@
 
 				// #endif
 
-				let date = new Date();
-				let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+				let currentMonthPrefix = new Date().format("yyyy/MM/");
 				let originData = getApp().globalData.data;
 				for (let record of originData) {
 					//映射日期到数组下标
