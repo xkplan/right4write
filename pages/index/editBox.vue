@@ -1,25 +1,25 @@
 <template>
 	<view class="container" @click="closeBox">
-		<view class="edit-box" @click.prevent=''>
+		<view class="edit-box" @click.stop=''>
 			<view class="edit-box-title">
-				<text class="edit-box-title-name">{{item.name}}</text>
-				<image class="edit-box-title-icon" :src="item.icon"></image>
+				<text class="edit-box-title-name">{{record.catagory}}</text>
+				<image class="edit-box-title-icon" :src="record.icon"></image>
 			</view>
 			<view class="edit-box-row">
 				<text class="edit-box-row-name">金额</text>
-				<text v-if="item.type == 'spend'" class="edit-box-row-data" style="color: #FE5250;">-{{item.money}}</text>
-				<text v-if="item.type == 'income'" class="edit-box-row-data" style="color: #3C424A;">+{{item.money}}</text>
+				<text v-if="record.type == 'spend'" class="edit-box-row-data" style="color: #FE5250;">-{{record.money.toFixed(2)}}</text>
+				<text v-if="record.type == 'income'" class="edit-box-row-data" style="color: #3C424A;">+{{record.money.toFixed(2)}}</text>
 			</view>
 			<view class="edit-box-row">
 				<text class="edit-box-row-name">类型</text>
-				<text class="edit-box-row-data" v-if="item.type == 'spend'">支出</text>
-				<text class="edit-box-row-data" v-if="item.type == 'income'">收入</text>
+				<text class="edit-box-row-data" v-if="record.type == 'spend'">支出</text>
+				<text class="edit-box-row-data" v-if="record.type == 'income'">收入</text>
 			</view>
 			<view class="edit-box-row">
 				<text class="edit-box-row-name">日期</text>
-				<text class="edit-box-row-data">{{datetime}}</text>
+				<text class="edit-box-row-data">{{record.datetime}}</text>
 			</view>
-			<input class="edit-box-note" :value="item.note" type="text" placeholder="无备注" placeholder-style="edit-box-note-placeholder" />
+			<input class="edit-box-note" :value="record.note" disabled="true" type="text" placeholder="无备注" placeholder-style="edit-box-note-placeholder" />
 			<view class="edit-box-button">
 				<text class="edit-box-button-delete" @click="deleteItem">删除</text>
 				<text class="edit-box-button-edit" @click="openDetailBox">修改</text>
@@ -30,7 +30,20 @@
 
 <script>
 	export default {
-		props: ['item', 'datetime'],
+		props: ['editRecord'],
+		data() {
+			return {
+				record: {
+					type: 'spend',
+					money: 0,
+					note: "",
+					datetime: "",
+					catagory: '',
+					icon: undefined,
+					datetime: undefined
+				}
+			}
+		},
 		methods: {},
 		methods: {
 			closeBox() {
@@ -41,6 +54,16 @@
 			},
 			deleteItem() {
 				this.$emit('deleteItem');
+			}
+		},
+		mounted() {
+			if (this.editRecord) {
+				this.record.type = this.editRecord.type;
+				this.record.money = this.editRecord.money;
+				this.record.catagory = this.editRecord.catagory;
+				this.record.datetime = this.editRecord.datetime;
+				this.record.note = this.editRecord.note;
+				this.record.icon = this.editRecord.icon;
 			}
 		}
 	}

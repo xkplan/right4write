@@ -24,10 +24,7 @@
 <script>
 	export default {
 		props: ['spend', 'income'],
-		methods: {},
-		mounted() {
-			console.log("1")
-		}
+		methods: {}
 	}
 </script>
 

@@ -1,17 +1,17 @@
 <template class="box">
 	<view class="container" style="display: flex;" :class="{noScroll: isShowWriteBox}">
-		<summaryBox :spend="currentMonthSpend" :income="currentMonthIncome"></summaryBox>
+		<summaryBox :spend="currentMonthSpend.toFixed(2)" :income="currentMonthIncome.toFixed(2)"></summaryBox>
 
 		<scroll-view class="list" :class="{noScroll: isShowWriteBox}">
-			<view class="list-card" v-for="(day, dayName) in data" :key="dayName">
+			<view class="list-card" v-for="(day, dayName) in mirrorData" :key="dayName">
 				<view class="list-card-title">
 					<view class="list-card-title-left">
 						<view class="list-card-title-left-split"></view>
 						<text class="list-card-title-left-name">{{dayName.slice(5)}}</text>
 					</view>
 					<view class="list-card-title-right">
-						<text class="list-card-title-right-income">+{{day.totalIncome}}</text>
-						<text class="list-card-title-right-spend">-{{day.totalSpend}}</text>
+						<text class="list-card-title-right-income">+{{day.totalIncome.toFixed(2)}}</text>
+						<text class="list-card-title-right-spend">-{{day.totalSpend.toFixed(2)}}</text>
 					</view>
 				</view>
 				<view class="list-card-item" v-for="(t, ti) in day.list" @click="clickItem(dayName, ti)">
@@ -20,11 +20,11 @@
 						<view class="list-card-item-detail-split"></view>
 						<view class="list-card-item-detail-wrap">
 							<view class="list-card-item-detail-left">
-								<text class="list-card-item-detail-left-name">{{t.name}}</text>
+								<text class="list-card-item-detail-left-name">{{t.catagory}}</text>
 								<text class="list-card-item-detail-left-note">{{t.note}}</text>
 							</view>
-							<text v-if="t.type == 'spend'" class="list-card-item-detail-money" style="color: #FE5250;">-{{t.money}}</text>
-							<text v-if="t.type == 'income'" class="list-card-item-detail-money" style="color: #3C424A;">+{{t.money}}</text>
+							<text v-if="t.type == 'spend'" class="list-card-item-detail-money" style="color: #FE5250;">-{{t.money.toFixed(2)}}</text>
+							<text v-if="t.type == 'income'" class="list-card-item-detail-money" style="color: #3C424A;">+{{t.money.toFixed(2)}}</text>
 						</view>
 					</view>
 				</view>
@@ -35,11 +35,11 @@
 
 		<view v-if="isShowWriteBox" class="write-box-mask" @scroll.prevent :animation="writeBoxMaskAnim">
 			<view class="write-box-wrap">
-				<writebox class="write-box" @writeboxclose="closeWriteBox()" @addNewRecord="addNewRecord"></writebox>
+				<writebox class="write-box" :editRecord="editRecord" @writeboxclose="closeWriteBox()" @confirmRecord="confirmRecord"></writebox>
 			</view>
 		</view>
 
-		<editBox v-if="isShowEditBox" class="editBox" :item="editItem" :datetime="editDatetime" @closeEditBox="closeEditBox"
+		<editBox v-if="isShowEditBox" class="editBox" :editRecord="editRecord" @closeEditBox="closeEditBox"
 		 @openEditDetailBox="openEditDetailBox" @deleteItem="deleteItem"></editBox>
 	</view>
 </template>
@@ -70,15 +70,13 @@
 					}
 				}
 				*/
-				data: {},
+				mirrorData: {},
+				editRecord: undefined,
 				currentMonthSpend: 0,
 				currentMonthIncome: 0,
 				isShowWriteBox: false,
 				listScrollTop: 0,
-				isShowEditBox: false,
-				editItem: {},
-				editDatetime: "2020/02/02",
-				editItemIndex: undefined
+				isShowEditBox: false
 			}
 		},
 		onLoad() {
@@ -141,6 +139,9 @@
 					scrollTop: that.$data.listScrollTop,
 					duration: 0
 				});
+
+				//清除正在编辑的记录
+				this.editRecord = undefined;
 			},
 			loadData() {
 				// #ifdef H5
@@ -150,71 +151,129 @@
 
 				// #endif
 
-				let that = this;
-				uni.getStorage({
-					key: "data",
-					success: function(data) {
-						console.log("success load data.")
-						console.log(data.data);
-						that.$data.data = getApp().globalData.data;
-						that.$data.data = data.data;
-
-						let date = new Date();
-						let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
-						for (let key in that.$data.data) {
-							if (key.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
-								console.log(JSON.stringify(that.$data.data[key]))
-								that.$data.currentMonthSpend += that.$data.data[key].totalSpend;
-								that.$data.currentMonthIncome += that.$data.data[key].totalIncome;
-							}
-						}
+				let date = new Date();
+				let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+				this.mirrorData = getApp().globalData.data;
+				for (let key in this.mirrorData) {
+					if (key.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+						this.$data.currentMonthSpend += this.mirrorData[key].totalSpend;
+						this.$data.currentMonthIncome += this.mirrorData[key].totalIncome;
 					}
-				});
+				}
+				console.log("列表页预处理数据完成");
 			},
-			addNewRecord(data) {
-				let store = this.$data.data;
-				if (!store[data.datetime]) {
-					store[data.datetime] = {
+			confirmRecord(rec) {
+				//如果没有今天的数据就初始化
+				if (!this.mirrorData[rec.datetime]) {
+					this.mirrorData[rec.datetime] = {
 						totalSpend: 0,
 						totalIncome: 0,
 						list: []
 					};
 				}
-				let item = store[data.datetime];
-				if (data.type == 'spend') {
-					item.totalSpend += data.money;
-					this.$data.currentMonthSpend += data.money;
-				} else if (data.type == 'income') {
-					item.totalIncome += data.money;
-					this.$data.currentMonthIncome += data.money;
+				//判断是编辑还是新增
+				console.log(JSON.stringify(rec))
+				if (rec.id) {
+					//编辑
+					let info = getApp().globalData.dataMap[rec.id];
+					let item = getApp().globalData.data[info.datetime].list[info.index];
+					item.icon = rec.icon;
+					item.catagory = rec.catagory;
+					item.note = rec.note;
+					item.type = rec.type;
+					item.money = rec.money;
+					item.datetime = rec.datetime;
+					if (info.datetime != rec.datetime) {
+						//更改日期
+						item = this.mirrorData[info.datetime].list.splice(info.index, 1);
+						console.log(JSON.stringify(info));
+						console.log(JSON.stringify(item));
+						// this.mirrorData[rec.datetime].list.push(item);
+						// info.datetime = rec.datetime;
+						// info.index = this.mirrorData[rec.datetime].list.length - 1;
+					}
+					console.log("修改一条记录：" + JSON.stringify(this.item));
+				} else {
+					//添加
+					let item = this.mirrorData[rec.datetime];
+					if (rec.type == 'spend') {
+						item.totalSpend += rec.money;
+
+						let date = new Date();
+						let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+						if (rec.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+							this.$data.currentMonthSpend += rec.money;
+						}
+					} else if (rec.type == 'income') {
+						item.totalIncome += rec.money;
+						this.$data.currentMonthIncome += rec.money;
+
+						let date = new Date();
+						let currentMonthPrefix = date.getFullYear() + "/" + (date.getMonth() + 1) + "/";
+						if (rec.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+							this.$data.currentMonthIncome += rec.money;
+						}
+					}
+					let addRecord = {
+						id: getApp().globalData.autoIncrementId++,
+						icon: "",
+						catagory: rec.catagory,
+						note: rec.note,
+						type: rec.type,
+						money: rec.money,
+						datetime: rec.datetime
+					};
+					item.list.push(addRecord);
+					getApp().globalData.dataMap[addRecord.id] = {
+						datetime: addRecord.datetime,
+						index: item.list.length - 1
+					};
+					console.log("添加一条记录：" + JSON.stringify(addRecord));
 				}
-				item.list.push({
-					icon: "",
-					name: data.catagory,
-					note: data.note,
-					type: data.type,
-					money: data.money
-				});
-				uni.setStorageSync("data", this.$data.data);
+				uni.setStorageSync("data", this.mirrorData);
 				this.closeWriteBox();
 			},
 			clickItem(day, index) {
-				let dayData = this.$data.data[day];
+				let dayData = this.mirrorData[day];
 				if (!dayData) return;
 				console.log(day + " " + JSON.stringify(dayData))
-				this.$data.editItem = dayData.list[index];
-				this.$data.editDatetime = day;
-				this.$data.isShowEditBox = true;
-				this.$data.editItemIndex = index;
+				this.editRecord = dayData.list[index];
+				this.editRecord["datetime"] = day;
+				if (this.editRecord.type == 'spend') {
+					let tmp = getApp().globalData.spendTypes;
+					for (let i of tmp) {
+						if (i.name == this.editRecord.catagory) {
+							this.editRecord["icon"] = i.icon;
+							break;
+						}
+					}
+				} else if (this.editRecord.type == 'income') {
+					let tmp = getApp().globalData.incomeTypes;
+					for (let i of tmp) {
+						if (i.name == this.editRecord.catagory) {
+							this.editRecord["icon"] = i.icon;
+							break;
+						}
+					}
+				}
+				this.isShowEditBox = true;
 			},
 			openEditDetailBox() {
-
+				this.isShowEditBox = false;
+				this.openWriteBox();
 			},
 			closeEditBox() {
-				this.$data.isShowEditBox = false;
+				this.isShowEditBox = false;
 			},
 			deleteItem() {
-
+				//删除
+				let info = getApp().globalData.dataMap[this.editRecord.id];
+				this.mirrorData[info.datetime].list.splice(info.index, 1);
+				if(this.mirrorData[info.datetime].list.length == 0){
+					this.mirrorData.delete(info.datetime);
+				}
+				this.isShowEditBox = false;
+				uni.setStorageSync("data", this.mirrorData);
 			}
 		},
 		components: {

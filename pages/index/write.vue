@@ -6,11 +6,11 @@
 				<image class="topBar-title-fork" src="~@/static/index/fork.svg" mode="aspectFit" @click="closeBox" />
 			</view>
 			<view class="topBar-subBar">
-				<text class="topBar-subBar-spend" :class="currentTab == 'spend' ? 'font-selected' : ''" v-on:click="switchTab('spend')">支出</text>
-				<text class="topBar-subBar-income" :class="currentTab == 'income' ? 'font-selected' : ''" v-on:click="switchTab('income')">收入</text>
+				<text class="topBar-subBar-spend" :class="record.type == 'spend' ? 'font-selected' : ''" v-on:click="switchTab('spend')">支出</text>
+				<text class="topBar-subBar-income" :class="record.type == 'income' ? 'font-selected' : ''" v-on:click="switchTab('income')">收入</text>
 			</view>
-			<view class="topBar-subBar-spend-underLine" v-if="currentTab == 'spend'"></view>
-			<view class="topBar-subBar-income-underLine" v-if="currentTab == 'income'"></view>
+			<view class="topBar-subBar-spend-underLine" v-if="record.type == 'spend'"></view>
+			<view class="topBar-subBar-income-underLine" v-if="record.type == 'income'"></view>
 		</view>
 
 		<view class="type-list" :animation="typeListSlideAnim">
@@ -22,10 +22,10 @@
 
 		<view class="inbox" :animation="inboxSlideAnim">
 			<view class="inbox-note">
-				<picker class="inbox-note-datetime" mode="date" @change="inputDatetime">{{datetime}}</picker>
-				<input class="inbox-note-content" placeholder="填写备注" :value="note" @input="inputNote" />
+				<picker class="inbox-note-datetime" mode="date" @change="inputDatetime">{{record.datetime}}</picker>
+				<input class="inbox-note-content" placeholder="填写备注" :value="record.note" @input="inputNote" />
 			</view>
-			<input class="inbox-money" placeholder="输入金额" disabled="disabled" :value="money" />
+			<input class="inbox-money" placeholder="输入金额" disabled="disabled" :value="record.money" />
 			<view class="inbox-keyboard">
 				<view class="inbox-keyboard-row">
 					<view class="inbox-keyboard-row-item" v-on:click="inputKey('1')" :class="keyClicked == '1' ? 'inbox-keyboard-row-item-selected' : ''">
@@ -89,135 +89,68 @@
 </template>
 
 <script>
+	/*
+	record: {
+		id: 0,
+		type: 'spend',
+		selected: 0,
+		money: 0,
+		note: "",
+		datetime: "2020/12/20",
+		catagory: ''
+	}
+	*/
 	export default {
+		props: ['editRecord'],
 		data() {
 			return {
 				inboxSlideAnim: {},
 				topBarSlideAnim: {},
 				typeListSlideAnim: {},
-				currentTab: 'spend',
 				selected: 0,
-				money: "",
-				note: "",
-				datetime: "2020/12/20",
+				record: {
+					id: undefined,
+					type: 'spend',
+					money: "",
+					note: "",
+					datetime: "",
+					catagory: ''
+				},
 				typeList: [],
-				spendTypes: [
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "吃饭"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					},
-					{
-						icon: "/static/type-icon/hamburger.svg",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "游戏"
-					}
-				],
-				incomeTypes: [
-					{
-						icon: "/static/icon-data.png",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "红包"
-					},
-					{
-						icon: "/static/icon-data.png",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "利息"
-					},
-					{
-						icon: "/static/icon-data.png",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "利息"
-					},
-					{
-						icon: "/static/icon-data.png",
-						selectedIcon: "/static/icon-data-selected.png",
-						name: "利息"
-					}
-				],
 				keyClicked: ''
 			}
 		},
 		onLoad() {},
 		methods: {
 			refreshTypeList() {
-				if (this.$data.currentTab == 'spend') {
-					for (let i of this.$data.spendTypes) this.$data.typeList.push(i);
+				if (this.$data.record.type == 'spend') {
+					for (let i of getApp().globalData.spendTypes) this.$data.typeList.push(i);
 				} else
-				if (this.$data.currentTab == 'income') {
-					for (let i of this.$data.incomeTypes) this.$data.typeList.push(i);
+				if (this.$data.record.type == 'income') {
+					for (let i of getApp().globalData.incomeTypes) this.$data.typeList.push(i);
 				}
 			},
 			switchTab(name) {
-				this.$data.currentTab = name;
+				if (name != 'spend' && name != 'income') return;
+				this.$data.record.type = name;
 				this.$data.typeList.length = 0;
-				this.refreshTypeList();
 				this.$data.selected = 0;
+				this.refreshTypeList();
+				if (name == 'spend') {
+					this.$data.record.catagory = getApp().globalData.spendTypes[0];
+				} else if (name == 'income') {
+					this.$data.record.catagory = getApp().globalData.incomeTypes[0];
+				}
 			},
-			select(index){
+			select(index) {
 				this.$data.selected = index;
 			},
 			inputDatetime(e) {
 				let date = new Date(e.target.value);
-				this.$data.datetime = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+				this.record.datetime = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
 			},
 			inputNote(e) {
-				this.$data.note = e.target.value;
+				this.record.note = e.target.value;
 			},
 			inputKey(ch) {
 				//点击效果
@@ -227,34 +160,42 @@
 					that.$data.keyClicked = '';
 				}, 200);
 
-				let im = this.$data.money;
+				let im = this.record.money;
 				if (im.length > 32) return;
 				if (ch == '.') {
 					if (im.indexOf('.') == -1) {
 						if (im.length == 0) {
-							this.$data.money = '0.';
-						} else this.$data.money = im + ch;
+							this.record.money = '0.';
+						} else this.record.money = im + ch;
 					}
 				} else if (ch == 'b') {
 					if (im.length > 0) {
-						this.$data.money = im.slice(0, im.length - 1);
+						this.record.money = im.slice(0, im.length - 1);
 					}
 				} else if (ch == 'ok') {
-					if(!this.$data.money){
+					if (!this.record.money) {
 						uni.showToast({
 							title: "请输入正确的金额",
 							icon: "none"
 						});
 						return;
 					}
-					
+
 					let that = this;
-					this.$emit('addNewRecord', {
-						datetime: that.$data.datetime,
-						note: that.$data.note,
-						money: parseFloat(that.$data.money),
-						type: that.$data.currentTab,
-						catagory: that.$data.typeList[this.$data.selected].name
+					let cc;
+					if (this.record.type == 'spend') {
+						cc = getApp().globalData.spendTypes[this.selected].name;
+					} else if (this.record.type == 'income') {
+						cc = getApp().globalData.incomeTypes[this.selected].name;
+					}
+
+					this.$emit('confirmRecord', {
+						id: that.record.id,
+						type: that.record.type,
+						money: parseFloat(that.record.money),
+						note: that.record.note,
+						datetime: that.record.datetime,
+						catagory: cc
 					});
 					this.closeBox();
 				} else {
@@ -274,7 +215,7 @@
 					if (im.indexOf('.') != -1 && im.length - im.indexOf('.') > 3) {
 						im = im.slice(0, im.indexOf('.') + 3);
 					}
-					this.$data.money = im;
+					this.record.money = im;
 				}
 			},
 			closeBox() {
@@ -294,6 +235,34 @@
 			}
 		},
 		mounted() {
+			let date = new Date();
+			this.$data.record.datetime = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+			if (this.editRecord) {
+				//修改
+				this.$data.record.id = this.editRecord.id;
+				this.$data.record.type = this.editRecord.type;
+				this.$data.record.money = this.editRecord.money;
+				this.$data.record.catagory = this.editRecord.catagory;
+				this.$data.record.datetime = this.editRecord.datetime;
+				this.$data.record.note = this.editRecord.note;
+				let tmpList;
+				if(this.record.type == 'spend'){
+					tmpList = getApp().globalData.spendTypes;
+				}else if(this.record.type == 'income'){
+					tmpList = getApp().globalData.incomeTypes;
+				}
+				for(let i in tmpList){
+					if(tmpList[i].name == this.record.catagory){
+						this.selected = i;
+						break;
+					}
+				}
+			}else {
+				//新建
+				this.selected = 0;
+				console.log("重置")
+			}
+
 			this.refreshTypeList();
 			let animation = uni.createAnimation({
 				duration: 600,
