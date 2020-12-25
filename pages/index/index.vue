@@ -15,7 +15,7 @@
 					</view>
 				</view>
 				<view class="list-card-item" v-for="(t, ti) in day.list" @click="clickItem(day.datetime, ti)">
-					<image class="list-card-item-icon" src="~@/static/logo.png" mode="widthFix" />
+					<image class="list-card-item-icon" :src="t.icon" mode="widthFix" />
 					<view class="list-card-item-detail">
 						<view class="list-card-item-detail-split"></view>
 						<view class="list-card-item-detail-wrap">
@@ -55,22 +55,6 @@
 			return {
 				writeBoxMaskAnim: {},
 				/*
-				data: {
-					"2020/12/05": {
-						totalSpend: "40.00",
-						totalIncome: "0.00",
-						list: [
-							{
-								id: 0
-								icon: "",
-								name: "吃饭",
-								note: "备注xxxx",
-								type: "spned",
-								money: "20.00"
-							}
-						]
-					}
-				}
 				mirrorData: [
 					{
 						datetime: "2020/12/05",
@@ -79,7 +63,7 @@
 						list: [
 							{
 								id: 0
-								icon: "",
+								icon: "",//冗余字段
 								name: "吃饭",
 								note: "备注xxxx",
 								type: "spned",
@@ -93,6 +77,9 @@
 				mirrorData: [],
 				//从日期到mirrorData数组下标的映射
 				mirrorDataMap: new Map(),
+				//类别名映射
+				spendTypeMap: new Map(),
+				incomeTypeMap: new Map(),
 				editRecord: undefined,
 				currentMonthSpend: 0,
 				currentMonthIncome: 0,
@@ -104,9 +91,9 @@
 		onLoad() {
 			this.closeWriteBox();
 			this.loadData();
-			// uni.setStorageSync("data", "");
 		},
 		methods: {
+
 			doSaveData() {
 				uni.setStorage({
 					key: 'data',
@@ -141,6 +128,12 @@
 					}
 				} else dayRecords = this.mirrorData[this.mirrorDataMap.get(record.datetime)];
 				//将数据写入统计数据
+				//冗余分类图标
+				if (record.type == 'spend') {
+					record.icon = this.spendTypeMap.get(record.catagory);
+				} else if (record.type == 'income') {
+					record.icon = this.incomeTypeMap.get(record.catagory);
+				}
 				dayRecords.list.push(record);
 				if (record.type == 'spend') {
 					dayRecords.totalSpend += record.money;
@@ -264,64 +257,44 @@
 				this.editRecord = undefined;
 			},
 			loadData() {
-				// #ifdef H5
-				// console.log("加载 H5 数据");
-				// #endif
-				// #ifndef H5
-
-				// #endif
-
+				//写入分类缓存
+				for (let i of getApp().globalData.spendTypes) {
+					this.spendTypeMap.set(i.name, i.icon);
+				}
+				for (let i of getApp().globalData.incomeTypes) {
+					this.incomeTypeMap.set(i.name, i.icon);
+				}
+				
 				let currentMonthPrefix = new Date().format("yyyy/MM/");
 				let originData = getApp().globalData.data;
 				for (let record of originData) {
 					//映射日期到数组下标
 					this.doAddRecord(record, false);
 				}
+				
 				console.log("列表页预处理数据完成");
 			},
 			confirmRecord(rec) {
-				//如果没有今天的数据就初始化
-				if (!this.mirrorData[rec.datetime]) {
-					this.mirrorData[rec.datetime] = {
-						totalSpend: 0,
-						totalIncome: 0,
-						datetime: rec.datetime,
-						list: []
-					};
-				}
+				let record = {
+					id: rec.id,
+					catagory: rec.catagory,
+					note: rec.note,
+					type: rec.type,
+					money: rec.money,
+					datetime: rec.datetime
+				};
 				//判断是编辑还是新增
-				console.log(JSON.stringify(rec))
 				if (rec.id) {
 					//编辑
-
-					let record = {
-						id: rec.id,
-						catagory: rec.catagory,
-						note: rec.note,
-						type: rec.type,
-						money: rec.money,
-						datetime: rec.datetime
-					};
-
 					this.doDeleteRecord(rec.id, false);
 					this.doAddRecord(record);
-
 					console.log("修改一条记录：" + JSON.stringify(this.item));
 				} else {
 					//添加
-					let record = {
-						id: getApp().globalData.autoIncrementId++,
-						icon: "",
-						catagory: rec.catagory,
-						note: rec.note,
-						type: rec.type,
-						money: rec.money,
-						datetime: rec.datetime
-					};
+					record.id = getApp().globalData.autoIncrementId++;
 					this.doAddRecord(record, true);
 					console.log("添加一条记录：" + JSON.stringify(record));
 				}
-				uni.setStorageSync("data", getApp().globalData.data);
 				this.closeWriteBox();
 			},
 			clickItem(day, index) {

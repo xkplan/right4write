@@ -65,9 +65,7 @@
 				this.globalData.data = res;
 				for (let i in this.globalData.data) {
 					let record = this.globalData.data[i];
-					console.log(JSON.stringify(record))
 					this.globalData.autoIncrementId = Math.max(this.globalData.autoIncrementId, record.id) + 1;
-					// this.globalData.dataMap.set(record.id, i);
 				}
 				console.log("当前自增ID为" + this.globalData.autoIncrementId);
 			}
