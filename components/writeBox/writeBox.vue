@@ -1,5 +1,5 @@
 <template>
-	<view class="container" :animation="maskSlideAnim">
+	<view class="writeBoxContainer" :animation="maskSlideAnim">
 		<view class="topBar" :animation="topBarSlideAnim">
 			<view class="topBar-title">
 				<text class="topBar-title-name">添加记账</text>
@@ -13,12 +13,14 @@
 			<view class="topBar-subBar-income-underLine" v-if="record.type == 'income'"></view>
 		</view>
 
-		<view class="type-list" :animation="typeListSlideAnim">
-			<view class="type-list-item" v-for="(type, index) in typeList" @click="select(index)">
-				<image class="type-list-item-icon" :src="selected == index ? type.selectedIcon: type.icon" />
-				<text class="type-list-item-name" :class="{'font-selected': selected == index}">{{type.name}}</text>
+		<scroll-view class="type-list-wrap" scroll-y="true">
+			<view class="type-list" :animation="typeListSlideAnim">
+				<view class="type-list-item" v-for="(type, index) in typeList" @click="select(index)">
+					<image class="type-list-item-icon" :src="selected == index ? type.selectedIcon: type.icon" />
+					<text class="type-list-item-name" :class="{'font-selected': selected == index}">{{type.name}}</text>
+				</view>
 			</view>
-		</view>
+		</scroll-view>
 
 		<view class="inbox" :animation="inboxSlideAnim">
 			<view class="inbox-note">
@@ -287,6 +289,10 @@
 			animation.bottom(0).step();
 			this.$data.inboxSlideAnim = animation.export();
 
+			animation = uni.createAnimation({
+				duration: 600,
+				timingFunction: 'ease'
+			});
 			animation.top(0).step();
 			this.$data.topBarSlideAnim = animation.export();
 
@@ -314,17 +320,18 @@
 		background-color: #F5F6F9;
 	}
 
-	.container {
+	.writeBoxContainer {
 		height: 100vh;
-		width: 100vw;
+		width: 750rpx;
 		top: 0;
 		left: 0;
 		background-color: rgba(245, 246, 249, 0);
 		display: flex;
-		justify-content: center;
 		align-items: center;
-		position: fixed;
 		z-index: 9999;
+
+		position: fixed;
+		justify-content: flex-start;
 	}
 
 	.topBar {
@@ -412,15 +419,20 @@
 	}
 
 	/* 类型列表 */
+	.type-list-wrap {
+		width: 750rpx;
+		height: 100vh;
+	}
+
 	.type-list {
 		padding-bottom: 630rpx;
 		width: 750rpx;
 		display: flex;
 		justify-content: flex-start;
-
 		flex-wrap: wrap;
 		position: absolute;
 		top: 100vh;
+		overflow: scroll;
 	}
 
 	.type-list-item {

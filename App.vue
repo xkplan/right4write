@@ -19,42 +19,139 @@
 			// dataMap: new Map(),
 			autoIncrementId: 0,
 			spendTypes: [{
-					icon: "/static/type-icon/hamburger.svg",
-					selectedIcon: "/static/icon-data-selected.png",
-					name: "吃饭"
-				},
-				{
-					icon: "/static/type-icon/hamburger.svg",
-					selectedIcon: "/static/icon-data-selected.png",
-					name: "游戏"
-				},
-				{
-					icon: "/static/type-icon/hamburger.svg",
-					selectedIcon: "/static/icon-data-selected.png",
-					name: "娱乐"
-				},
-				{
-					icon: "/static/type-icon/hamburger.svg",
-					selectedIcon: "/static/icon-data-selected.png",
-					name: "购物"
-				}
-			],
+				"name": "交通费",
+				"icon": "/static/type-icon/1000.png",
+				"selectedIcon": "/static/type-icon/1000-s.png"
+			}, {
+				"name": "住房",
+				"icon": "/static/type-icon/1001.png",
+				"selectedIcon": "/static/type-icon/1001-s.png"
+			}, {
+				"name": "公交",
+				"icon": "/static/type-icon/1002.png",
+				"selectedIcon": "/static/type-icon/1002-s.png"
+			}, {
+				"name": "其他",
+				"icon": "/static/type-icon/1003.png",
+				"selectedIcon": "/static/type-icon/1003-s.png"
+			}, {
+				"name": "办公",
+				"icon": "/static/type-icon/1004.png",
+				"selectedIcon": "/static/type-icon/1004-s.png"
+			}, {
+				"name": "医疗",
+				"icon": "/static/type-icon/1005.png",
+				"selectedIcon": "/static/type-icon/1005-s.png"
+			}, {
+				"name": "吃饭",
+				"icon": "/static/type-icon/1006.png",
+				"selectedIcon": "/static/type-icon/1006-s.png"
+			}, {
+				"name": "咖啡",
+				"icon": "/static/type-icon/1007.png",
+				"selectedIcon": "/static/type-icon/1007-s.png"
+			}, {
+				"name": "娱乐",
+				"icon": "/static/type-icon/1008.png",
+				"selectedIcon": "/static/type-icon/1008-s.png"
+			}, {
+				"name": "宠物",
+				"icon": "/static/type-icon/1009.png",
+				"selectedIcon": "/static/type-icon/1009-s.png"
+			}, {
+				"name": "小吃",
+				"icon": "/static/type-icon/1010.png",
+				"selectedIcon": "/static/type-icon/1010-s.png"
+			}, {
+				"name": "快递",
+				"icon": "/static/type-icon/1011.png",
+				"selectedIcon": "/static/type-icon/1011-s.png"
+			}, {
+				"name": "教育",
+				"icon": "/static/type-icon/1012.png",
+				"selectedIcon": "/static/type-icon/1012-s.png"
+			}, {
+				"name": "日用",
+				"icon": "/static/type-icon/1013.png",
+				"selectedIcon": "/static/type-icon/1013-s.png"
+			}, {
+				"name": "服饰",
+				"icon": "/static/type-icon/1014.png",
+				"selectedIcon": "/static/type-icon/1014-s.png"
+			}, {
+				"name": "水果",
+				"icon": "/static/type-icon/1015.png",
+				"selectedIcon": "/static/type-icon/1015-s.png"
+			}, {
+				"name": "烟酒",
+				"icon": "/static/type-icon/1016.png",
+				"selectedIcon": "/static/type-icon/1016-s.png"
+			}, {
+				"name": "维修",
+				"icon": "/static/type-icon/1017.png",
+				"selectedIcon": "/static/type-icon/1017-s.png"
+			}, {
+				"name": "药品",
+				"icon": "/static/type-icon/1018.png",
+				"selectedIcon": "/static/type-icon/1018-s.png"
+			}, {
+				"name": "购物",
+				"icon": "/static/type-icon/1019.png",
+				"selectedIcon": "/static/type-icon/1019-s.png"
+			}, {
+				"name": "超市",
+				"icon": "/static/type-icon/1020.png",
+				"selectedIcon": "/static/type-icon/1020-s.png"
+			}, {
+				"name": "运动",
+				"icon": "/static/type-icon/1021.png",
+				"selectedIcon": "/static/type-icon/1021-s.png"
+			}, {
+				"name": "飞机",
+				"icon": "/static/type-icon/1022.png",
+				"selectedIcon": "/static/type-icon/1022-s.png"
+			}, {
+				"name": "饮料",
+				"icon": "/static/type-icon/1023.png",
+				"selectedIcon": "/static/type-icon/1023-s.png"
+			}],
 			incomeTypes: [{
-					icon: "/static/icon-data.png",
-					selectedIcon: "/static/icon-data-selected.png",
-					name: "红包"
-				},
-				{
-					icon: "/static/icon-data.png",
-					selectedIcon: "/static/icon-data-selected.png",
-					name: "利息"
-				},
-				{
-					icon: "/static/icon-data.png",
-					selectedIcon: "/static/icon-data-selected.png",
-					name: "收款"
-				}
-			]
+				"name": "其他",
+				"icon": "/static/type-icon/2000.png",
+				"selectedIcon": "/static/type-icon/2000-s.png"
+			}, {
+				"name": "兼职",
+				"icon": "/static/type-icon/2001.png",
+				"selectedIcon": "/static/type-icon/2001-s.png"
+			}, {
+				"name": "分红",
+				"icon": "/static/type-icon/2002.png",
+				"selectedIcon": "/static/type-icon/2002-s.png"
+			}, {
+				"name": "奖金",
+				"icon": "/static/type-icon/2003.png",
+				"selectedIcon": "/static/type-icon/2003-s.png"
+			}, {
+				"name": "工资",
+				"icon": "/static/type-icon/2004.png",
+				"selectedIcon": "/static/type-icon/2004-s.png"
+			}, {
+				"name": "现金",
+				"icon": "/static/type-icon/2005.png",
+				"selectedIcon": "/static/type-icon/2005-s.png"
+			}, {
+				"name": "理财",
+				"icon": "/static/type-icon/2006.png",
+				"selectedIcon": "/static/type-icon/2006-s.png"
+			}, {
+				"name": "退款",
+				"icon": "/static/type-icon/2007.png",
+				"selectedIcon": "/static/type-icon/2007-s.png"
+			}, {
+				"name": "销售",
+				"icon": "/static/type-icon/2008.png",
+				"selectedIcon": "/static/type-icon/2008-s.png"
+			}]
 		},
 		onLaunch: function() {
 			console.log('App Launch');
@@ -97,8 +194,8 @@
 		onHide: function() {
 			console.log('App Hide')
 		},
-		methods:{
-			test(){
+		methods: {
+			test() {
 				console.log("test");
 			}
 		}
