@@ -54,9 +54,7 @@
 					selectedIcon: "/static/icon-data-selected.png",
 					name: "收款"
 				}
-			],
-			//滚动事件穿透解决方案
-			pageScrollTop: 0
+			]
 		},
 		onLaunch: function() {
 			console.log('App Launch');

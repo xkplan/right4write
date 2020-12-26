@@ -1,6 +1,11 @@
 <template class="box">
 	<view class="container" style="display: flex;">
-		<summaryBox :spend="currentMonthSpend.toFixed(2)" :income="currentMonthIncome.toFixed(2)"></summaryBox>
+		<summaryBox></summaryBox>
+
+		<view class="no-data-tip" v-if="mirrorData.length == 0">
+			<image class="no-data-tip-img" src="/static/index/no-data-tip.png" mode="aspectFit"></image>
+			<text class="no-data-tip-text">未有任何记录</text>
+		</view>
 
 		<scroll-view class="list">
 			<view class="list-card" v-for="day in mirrorData">
@@ -73,8 +78,6 @@
 				spendTypeMap: new Map(),
 				incomeTypeMap: new Map(),
 				editRecord: undefined,
-				currentMonthSpend: 0,
-				currentMonthIncome: 0,
 				isShowWriteBox: false,
 				listScrollTop: 0,
 				isShowEditBox: false
@@ -85,15 +88,6 @@
 			this.loadData();
 		},
 		methods: {
-			doSaveData() {
-				uni.setStorage({
-					key: 'data',
-					data: getApp().globalData.data,
-					success: function() {
-						console.log('succed save data.');
-					}
-				});
-			},
 			doAddRecord(record, saveGlobal = true) { //添加一条记录，保证时间顺序
 				if (saveGlobal) {
 					getApp().globalData.data.push(record);
@@ -189,7 +183,6 @@
 				}
 			},
 			refreshScrollTop() { // 刷新滚动条位置(解决滚动事件穿透的问题,在关闭记账组件时把页面滚动到打开时的位置)
-				console.log("not h5");
 				let that = this;
 				let query = uni.createSelectorQuery().in(this);
 				query.selectViewport('.list').fields({
@@ -297,6 +290,8 @@
 				//删除
 				this.doDeleteRecord(this.editRecord.id);
 				this.isShowEditBox = false;
+				//清除正在编辑的记录
+				this.editRecord = undefined;
 			}
 		},
 		watch: {

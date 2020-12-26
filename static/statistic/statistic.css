@@ -1,4 +1,53 @@
-.line-chart{
-	width: 580rpx;
+.list {
+	margin-top: 441rpx;
+	margin-bottom: 125rpx;
+	width: 100vw;
+	padding: 0 33rpx;
+}
+
+.list-card {
+	width: 683rpx;
+	background: #FFFFFF;
+	box-shadow: 0rpx -2rpx 15rpx 10rpx rgba(0, 0, 0, 0.02);
+	border-radius: 17rpx;
+	display: flex;
+	margin-top: 21rpx;
+	flex-wrap: wrap;
+}
+
+.list-card-title {
+	height: 101rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.list-card-title-split {
+	width: 8rpx;
+	height: 26rpx;
+	background: #BCC2CA;
+	margin-left: 24rpx;
+}
+
+.list-card-title-name {
+	margin-left: 14rpx;
+	height: 47rpx;
+	font-size: 33rpx;
+	font-weight: 500;
+	color: #3C424A;
+	line-height: 47rpx;
+}
+
+.list-card-item {
+	width: 629rpx;
+	margin-left: 27rpx;
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
+	align-items: center;
+}
+
+.line-chart {
+	width: 629rpx;
 	height: 580rpx;
 }

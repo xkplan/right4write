@@ -1,3 +1,26 @@
+/* 没有数据显示提示图片 */
+.no-data-tip {
+	position: fixed;
+	width: 750rpx;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	top: 600rpx;
+}
+
+.no-data-tip-img{
+	width: 300rpx;
+	height: 300rpx;
+}
+
+.no-data-tip-text{
+	width: 300rpx;
+	text-align: center;
+	margin-top: 24rpx;
+}
+
 /* 列表 */
 .list {
 	margin-top: 441rpx;
@@ -133,7 +156,7 @@
 }
 
 /* 编辑窗 */
-.editBox{
+.editBox {
 	position: fixed;
 	z-index: 9999;
 }

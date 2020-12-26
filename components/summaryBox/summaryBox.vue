@@ -69,14 +69,16 @@
 	/* 统计框 */
 	.box-summary {
 		position: fixed;
-		top: 79rpx;
-		left: 33rpx;
+		padding-left: 33rpx;
+		padding-right: 33rpx;
 		display: flex;
 		flex-direction: column;
 		z-index: 99;
+		background-color: #F5F6F9;
 	}
 
 	.title-summary {
+		margin-top: 79rpx;
 		font-size: 63rpx;
 		color: #3C424A;
 	}

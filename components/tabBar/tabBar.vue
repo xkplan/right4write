@@ -15,13 +15,13 @@
 			},
 			openListPage() {
 				if (this.tab == 'list') return;
-				uni.navigateTo({
+				uni.redirectTo({
 					url: "/pages/index/index"
 				});
 			},
 			openStatisticPage() {
 				if (this.tab == 'statistic') return;
-				uni.navigateTo({
+				uni.redirectTo({
 					url: "/pages/statistic/statistic"
 				});
 			}
@@ -41,6 +41,7 @@
 		display: flex;
 		justify-content: space-evenly;
 		align-items: center;
+		z-index: 999;
 	}
 
 	.tabBar image {

@@ -9,3 +9,13 @@ const app = new Vue({
 	...App
 })
 app.$mount()
+
+Vue.prototype.doSaveData = function() {
+	uni.setStorage({
+		key: 'data',
+		data: getApp().globalData.data,
+		success: function() {
+			console.log('succed save data.');
+		}
+	});
+};
