@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container" :animation="maskSlideAnim">
 		<view class="topBar" :animation="topBarSlideAnim">
 			<view class="topBar-title">
 				<text class="topBar-title-name">添加记账</text>
@@ -107,6 +107,7 @@
 				inboxSlideAnim: {},
 				topBarSlideAnim: {},
 				typeListSlideAnim: {},
+				maskSlideAnim: {},
 				selected: 0,
 				record: {
 					id: undefined,
@@ -219,7 +220,7 @@
 				}
 			},
 			closeBox() {
-				this.$emit('writeboxclose');
+				this.$emit('closeWriteBox');
 				let animation = uni.createAnimation({
 					duration: 600,
 					timingFunction: 'ease',
@@ -227,11 +228,26 @@
 				animation.bottom('-596rpx').step();
 				this.$data.inboxSlideAnim = animation.export();
 
+				animation = uni.createAnimation({
+					duration: 600,
+					timingFunction: 'ease',
+				});
 				animation.top('-269rpx').step();
 				this.$data.topBarSlideAnim = animation.export();
 
+				animation = uni.createAnimation({
+					duration: 600,
+					timingFunction: 'ease',
+				});
 				animation.top('100vh').step();
 				this.$data.typeListSlideAnim = animation.export();
+
+				animation = uni.createAnimation({
+					duration: 600,
+					timingFunction: 'ease',
+				});
+				animation.opacity(0).step();
+				this.maskSlideAnim = animation.export();
 			}
 		},
 		mounted() {
@@ -246,18 +262,18 @@
 				this.$data.record.datetime = this.editRecord.datetime;
 				this.$data.record.note = this.editRecord.note;
 				let tmpList;
-				if(this.record.type == 'spend'){
+				if (this.record.type == 'spend') {
 					tmpList = getApp().globalData.spendTypes;
-				}else if(this.record.type == 'income'){
+				} else if (this.record.type == 'income') {
 					tmpList = getApp().globalData.incomeTypes;
 				}
-				for(let i in tmpList){
-					if(tmpList[i].name == this.record.catagory){
+				for (let i in tmpList) {
+					if (tmpList[i].name == this.record.catagory) {
 						this.selected = i;
 						break;
 					}
 				}
-			}else {
+			} else {
 				//新建
 				this.selected = 0;
 				console.log("重置")
@@ -280,15 +296,267 @@
 			});
 			animation.top('280rpx').step();
 			this.$data.typeListSlideAnim = animation.export();
+
+			animation = uni.createAnimation({
+				duration: 600,
+				timingFunction: 'ease',
+			});
+			animation.backgroundColor('#F5F6F9').step();
+			this.maskSlideAnim = animation.export();
 		}
 	}
 </script>
 
 <style>
-	@import url("~@/static/index/write.css");
 	@import url("~@/static/common.css");
 
 	page {
 		background-color: #F5F6F9;
+	}
+
+	.container {
+		height: 100vh;
+		width: 100vw;
+		top: 0;
+		left: 0;
+		background-color: rgba(245, 246, 249, 0);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: fixed;
+		z-index: 9999;
+	}
+
+	.topBar {
+		width: 750rpx;
+		height: 269rpx;
+		background: #FFFFFF;
+		box-shadow: 0px -2rpx 15rpx 10rpx rgba(0, 0, 0, 0.02);
+		border-radius: 0rpx 0rpx 43rpx 43rpx;
+		display: flex;
+		flex-direction: column;
+		position: fixed;
+		left: 0;
+		top: -269rpx;
+		z-index: 99;
+	}
+
+	.topBar-title {
+		margin-top: 79rpx;
+		margin-left: 33rpx;
+		height: 88rpx;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		position: relative;
+	}
+
+	.topBar-title-name {
+		height: 88rpx;
+		font-size: 63rpx;
+		font-weight: 500;
+		color: #3C424A;
+		line-height: 88rpx;
+		position: absolute;
+		left: 0;
+	}
+
+	.topBar-title-fork {
+		height: 33rpx;
+		width: 33rpx;
+		position: absolute;
+		right: 60rpx;
+	}
+
+	.topBar-subBar {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		margin-left: 33rpx;
+		margin-top: 15rpx;
+	}
+
+	.topBar-subBar-spend {
+		height: 47rpx;
+		font-size: 33rpx;
+		font-weight: 500;
+		line-height: 47rpx;
+	}
+
+	.topBar-subBar-income {
+		height: 47rpx;
+		font-size: 33rpx;
+		font-weight: 500;
+		line-height: 47rpx;
+		margin-left: 67rpx;
+	}
+
+	.topBar-subBar-spend-underLine {
+		width: 60rpx;
+		height: 8rpx;
+		background: #FF9D72;
+		border-radius: 4rpx;
+		margin-left: 33rpx;
+		margin-top: 6rpx;
+		animation: all 1s;
+	}
+
+	.topBar-subBar-income-underLine {
+		width: 60rpx;
+		height: 8rpx;
+		background: #FF9D72;
+		border-radius: 4rpx;
+		margin-left: 162rpx;
+		margin-top: 6rpx;
+		animation: all 1s;
+	}
+
+	/* 类型列表 */
+	.type-list {
+		padding-bottom: 630rpx;
+		width: 750rpx;
+		display: flex;
+		justify-content: flex-start;
+
+		flex-wrap: wrap;
+		position: absolute;
+		top: 100vh;
+	}
+
+	.type-list-item {
+		width: 196rpx;
+		height: 75rpx;
+		margin-left: 40.5rpx;
+		background: #FFFFFF;
+		box-shadow: 0rpx 0rpx 11rpx 2rpx rgba(0, 0, 0, 0.02);
+		border-radius: 38rpx;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		margin-top: 29rpx;
+	}
+
+	.type-list-item-icon {
+		height: 67rpx;
+		width: 67rpx;
+		border-radius: 38rpx;
+		margin-left: 6rpx;
+	}
+
+	.type-list-item-name {
+		margin-left: 17rpx;
+		height: 34rpx;
+		font-size: 25rpx;
+		font-weight: 500;
+		color: #3C424A;
+		line-height: 34rpx;
+	}
+
+	/* 输入框 */
+	.inbox {
+		width: 750rpx;
+		height: 596rpx;
+		background: #FFFFFF;
+		box-shadow: 0rpx -2rpx 15rpx 10rpx rgba(0, 0, 0, 0.02);
+		border-radius: 43rpx 43rpx 0rpx 0rpx;
+		position: fixed;
+		left: 0;
+		bottom: -596rpx;
+	}
+
+	.inbox-note {
+		height: 50rpx;
+		margin: 33rpx 33rpx 0rpx 33rpx;
+		display: flex;
+		flex-direction: row;
+	}
+
+	.inbox-note-datetime {
+		width: 179rpx;
+		height: 54rpx;
+		background: #FF9D72;
+		border-radius: 27rpx;
+		font-size: 25rpx;
+		font-weight: 500;
+		color: #FFFFFF;
+		line-height: 50rpx;
+		text-align: center;
+	}
+
+	.inbox-note-content {
+		height: 54rpx;
+		background: #F1F5F9;
+		border-radius: 27rpx;
+		margin-left: 18rpx;
+		flex-grow: 1;
+		padding: 0 24rpx;
+		font-size: 25rpx;
+		font-weight: 400;
+		color: #BCC2CA;
+		line-height: 34rpx;
+	}
+
+	.inbox-money {
+		margin-left: 33rpx;
+		margin-right: 33rpx;
+		margin-top: 12rpx;
+		height: 67rpx;
+		background: #F1F5F9;
+		border-radius: 27rpx;
+		padding: 0 33rpx;
+		text-align: right;
+	}
+
+	/* 键盘 */
+	.inbox-keyboard {}
+
+	.inbox-keyboard-row {
+		height: 75rpx;
+		display: flex;
+		justify-content: space-evenly;
+		align-items: center;
+		margin-top: 25rpx;
+	}
+
+	.inbox-keyboard-row-item {
+		height: 75rpx;
+		width: 75rpx;
+		border-radius: 37.5rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.inbox-keyboard-row-item-text {
+		text-align: center;
+		font-size: 48rpx;
+		font-weight: 500;
+		color: #3C424A;
+	}
+
+	.inbox-keyboard-row-item-img {
+		height: 30rpx;
+		width: 30rpx;
+	}
+
+	.inbox-keyboard-row-item-selected {
+		background: #F1F5F8;
+	}
+
+	.inbox-keyboard-row-item-backspace {
+		background: #f1f5f8;
+	}
+
+	.inbox-keyboard-row-item-backspace-selected {
+		background: #FF9D72;
+	}
+
+	.inbox-keyboard-row-item-submit {
+		background: #FF9D72;
+	}
+
+	.inbox-keyboard-row-item-submit-selected {
+		background: #eb875c;
 	}
 </style>

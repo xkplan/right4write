@@ -8,21 +8,14 @@
 				"backgroundColor": "#F5F6F9"
 			}
 		}, {
-			"path": "pages/index/write",
-			"style": {
-				"transparentTitle": "always",
-				"navigationBarTitleText": "uni-app",
-				"backgroundColor": "#F5F6F9"
-			}
-		}, {
-			"path": "pages/index/editBox",
+			"path": "pages/statistic/statistic",
 			"style": {
 				"transparentTitle": "always",
 				"navigationBarTitleText": "uni-app",
 				"backgroundColor": "#F5F6F9"
 			}
 		}
-	],
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

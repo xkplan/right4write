@@ -1,8 +1,8 @@
 <template class="box">
-	<view class="container" style="display: flex;" :class="{noScroll: isShowWriteBox}">
+	<view class="container" style="display: flex;">
 		<summaryBox :spend="currentMonthSpend.toFixed(2)" :income="currentMonthIncome.toFixed(2)"></summaryBox>
 
-		<scroll-view class="list" :class="{noScroll: isShowWriteBox}">
+		<scroll-view class="list">
 			<view class="list-card" v-for="day in mirrorData">
 				<view class="list-card-title">
 					<view class="list-card-title-left">
@@ -33,11 +33,8 @@
 
 		<tabBar @openWriteBox="openWriteBox" tab="list"></tabBar>
 
-		<view v-if="isShowWriteBox" class="write-box-mask" @scroll.prevent :animation="writeBoxMaskAnim">
-			<view class="write-box-wrap">
-				<writebox class="write-box" :editRecord="editRecord" @writeboxclose="closeWriteBox()" @confirmRecord="confirmRecord"></writebox>
-			</view>
-		</view>
+		<writeBox v-if="isShowWriteBox" class="write-box" :editRecord="editRecord" @closeWriteBox="closeWriteBox()"
+		 @confirmRecord="confirmRecord"></writeBox>
 
 		<editBox v-if="isShowEditBox" class="editBox" :editRecord="editRecord" @closeEditBox="closeEditBox"
 		 @openEditDetailBox="openEditDetailBox" @deleteItem="deleteItem"></editBox>
@@ -45,11 +42,6 @@
 </template>
 
 <script>
-	import write from './write';
-	import tabBar from './tabBar';
-	import summaryBox from './summaryBox';
-	import editBox from './editBox';
-
 	export default {
 		data() {
 			return {
@@ -93,7 +85,6 @@
 			this.loadData();
 		},
 		methods: {
-
 			doSaveData() {
 				uni.setStorage({
 					key: 'data',
@@ -198,58 +189,30 @@
 				}
 			},
 			refreshScrollTop() { // 刷新滚动条位置(解决滚动事件穿透的问题,在关闭记账组件时把页面滚动到打开时的位置)
-				// #ifdef H5
-				console.log("h5");
-				let scrollTop = 0;
-				if (document.documentElement && document.documentElement.scrollTop) {
-					scrollTop = document.documentElement.scrollTop;
-				} else if (document.body) {
-					scrollTop = document.body.scrollTop;
-				}
-				this.$data.listScrollTop = scrollTop;
-				this.pageScrollYoffset = this.$data.listScrollTop;
-				// #endif
-
-				// #ifndef H5
 				console.log("not h5");
 				let that = this;
 				let query = uni.createSelectorQuery().in(this);
 				query.selectViewport('.list').fields({
 					scrollOffset: true
 				}, function(data) {
-					that.$data.listScrollTop = data.scrollTop;
-					that.pageScrollYoffset = that.$data.listScrollTop;
+					that.listScrollTop = data.scrollTop;
+					that.pageScrollYoffset = that.listScrollTop;
 				}).exec();
-				// #endif
 			},
 			openWriteBox() {
 				this.refreshScrollTop();
-
 				this.isShowWriteBox = true;
-				let animation = uni.createAnimation({
-					duration: 600,
-					timingFunction: 'ease',
-				});
-				animation.backgroundColor('#F5F6F9').step();
-				this.$data.writeBoxMaskAnim = animation.export();
 			},
 			closeWriteBox() {
-				let animation = uni.createAnimation({
-					duration: 600,
-					timingFunction: 'ease',
-				});
-				animation.opacity(0).step();
-				this.$data.writeBoxMaskAnim = animation.export();
-
 				let that = this;
 				setTimeout(function() {
 					that.isShowWriteBox = false;
 				}, 600);
 
-				console.log("reset scrollTop: " + this.$data.listScrollTop);
-				this.pageScrollYoffset = this.$data.listScrollTop;
+				console.log("reset scrollTop: " + this.listScrollTop);
+				this.pageScrollYoffset = this.listScrollTop;
 				uni.pageScrollTo({
-					scrollTop: that.$data.listScrollTop,
+					scrollTop: this.listScrollTop,
 					duration: 0
 				});
 
@@ -264,14 +227,14 @@
 				for (let i of getApp().globalData.incomeTypes) {
 					this.incomeTypeMap.set(i.name, i.icon);
 				}
-				
+
 				let currentMonthPrefix = new Date().format("yyyy/MM/");
 				let originData = getApp().globalData.data;
 				for (let record of originData) {
 					//映射日期到数组下标
 					this.doAddRecord(record, false);
 				}
-				
+
 				console.log("列表页预处理数据完成");
 			},
 			confirmRecord(rec) {
@@ -327,18 +290,14 @@
 			},
 			closeEditBox() {
 				this.isShowEditBox = false;
+				//清除正在编辑的记录
+				this.editRecord = undefined;
 			},
 			deleteItem() {
 				//删除
 				this.doDeleteRecord(this.editRecord.id);
 				this.isShowEditBox = false;
 			}
-		},
-		components: {
-			'writebox': write,
-			'tabBar': tabBar,
-			'summaryBox': summaryBox,
-			'editBox': editBox
 		},
 		watch: {
 			isShowWriteBox(newVal, oldVal) {}

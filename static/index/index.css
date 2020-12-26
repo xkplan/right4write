@@ -132,37 +132,6 @@
 	right: 0;
 }
 
-/* 记账 */
-.noScroll {
-	/* 当前蒙层显示时生效 */
-	overflow-y: hidden;
-}
-
-.write-box-mask {
-	background-color: rgba(245, 246, 249, 0);
-	display: flex !important;
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: 9999;
-	width: 100vw;
-	height: 100vh;
-	justify-content: center;
-	align-items: center;
-}
-
-.write-box-wrap {
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-
-	width: 100vw;
-	height: 100vh;
-	overflow-y: scroll;
-	/* ios需要下面这个属性 */
-	-webkit-overflow-scrolling: touch;
-}
-
 /* 编辑窗 */
 .editBox{
 	position: fixed;

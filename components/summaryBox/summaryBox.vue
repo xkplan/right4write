@@ -9,11 +9,11 @@
 			<view class="summary-card-money">
 				<view class="summary-card-money-spend">
 					<text class="summary-card-money-spend-title">支出</text>
-					<text class="summary-card-money-spend-number">{{spend}}</text>
+					<text class="summary-card-money-spend-number">{{spend.toFixed(2)}}</text>
 				</view>
 				<view class="summary-card-money-income">
 					<text class="summary-card-money-income-title">收入</text>
-					<text class="summary-card-money-income-number">{{income}}</text>
+					<text class="summary-card-money-income-number">{{income.toFixed(2)}}</text>
 				</view>
 			</view>
 			<image class="summary-card-bg" mode="aspectFit" src="~@/static/index/summary-bg.png"></image>
@@ -23,8 +23,45 @@
 
 <script>
 	export default {
-		props: ['spend', 'income'],
-		methods: {}
+		data() {
+			return {
+				spend: 0,
+				income: 0,
+				globalData: undefined
+			}
+		},
+		methods: {
+			refreshSummary() {
+				this.spend = 0;
+				this.income = 0;
+				for (let record of getApp().globalData.data) {
+					if (record.type == 'spend') {
+						let currentMonthPrefix = new Date().format("yyyy/MM/");
+						if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+							this.spend += record.money;
+						}
+					} else if (record.type == 'income') {
+						let currentMonthPrefix = new Date().format("yyyy/MM/");
+						if (record.datetime.slice(0, currentMonthPrefix.length) == currentMonthPrefix) {
+							this.income += record.money;
+						}
+					}
+				}
+			}
+		},
+		mounted() {
+			this.globalData = getApp().globalData.data;
+			this.refreshSummary();
+		},
+		watch: {
+			globalData: {
+				handler(newVal, oldVal) {
+					this.refreshSummary();
+				},
+				deep: true,
+				immediate: true
+			}
+		}
 	}
 </script>
 
