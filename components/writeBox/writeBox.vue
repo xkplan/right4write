@@ -259,7 +259,7 @@
 				//修改
 				this.$data.record.id = this.editRecord.id;
 				this.$data.record.type = this.editRecord.type;
-				this.$data.record.money = this.editRecord.money;
+				this.$data.record.money = this.editRecord.money.toString();
 				this.$data.record.catagory = this.editRecord.catagory;
 				this.$data.record.datetime = this.editRecord.datetime;
 				this.$data.record.note = this.editRecord.note;
