@@ -9,11 +9,11 @@
 			<view class="summary-card-money">
 				<view class="summary-card-money-spend">
 					<text class="summary-card-money-spend-title">支出</text>
-					<text class="summary-card-money-spend-number">{{spend.toFixed(2)}}</text>
+					<text class="summary-card-money-spend-number">￥{{spend >= 100000 ? ((spend / 10000).toFixed(0) + '万') : spend.toFixed(2)}}</text>
 				</view>
 				<view class="summary-card-money-income">
 					<text class="summary-card-money-income-title">收入</text>
-					<text class="summary-card-money-income-number">{{income.toFixed(2)}}</text>
+					<text class="summary-card-money-income-number">￥{{income >= 100000 ? ((income / 10000).toFixed(0) + '万') : income.toFixed(2)}}</text>
 				</view>
 			</view>
 			<image class="summary-card-bg" mode="aspectFit" src="~@/static/index/summary-bg.png"></image>
@@ -139,8 +139,9 @@
 	.summary-card-money-income {
 		display: flex;
 		flex-direction: column;
-		width: 280rpx;
+		width: 260rpx;
 		margin-left: 24rpx;
+		z-index: 99;
 	}
 
 	.summary-card-money-spend-title,

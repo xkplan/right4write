@@ -477,7 +477,6 @@
 		height: 34rpx;
 		font-size: 25rpx;
 		font-weight: 500;
-		color: #3C424A;
 		line-height: 34rpx;
 	}
 

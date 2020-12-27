@@ -320,6 +320,12 @@
 					}
 				});
 				let that = this;
+				that.refreshLineChartImage();
+				let itvl = setInterval(function() {
+					if (that.lineChartImg) {
+						clearInterval(itvl);
+					} else that.refreshLineChartImage();
+				}, 100);
 				this.lineChart.addEventListener("renderComplete", function() {
 					that.refreshLineChartImage();
 				});
@@ -373,6 +379,11 @@
 					});
 
 					let that = this;
+					let itvl = setInterval(function() {
+						if (that.incomePieChartImg) {
+							clearInterval(itvl);
+						} else that.refreshIncomePieChartImage();
+					}, 100);
 					this.incomePieChart.addEventListener("renderComplete", function() {
 						that.refreshIncomePieChartImage();
 					});
@@ -425,6 +436,11 @@
 						}
 					});
 					let that = this;
+					let itvl = setInterval(function() {
+						if (that.spendPieChartImg) {
+							clearInterval(itvl);
+						} else that.refreshSpendPieChartImage();
+					}, 100);
 					this.spendPieChart.addEventListener("renderComplete", function() {
 						that.refreshSpendPieChartImage();
 					});
