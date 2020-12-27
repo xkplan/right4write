@@ -210,7 +210,7 @@
 				});
 
 				//清除正在编辑的记录
-				this.editRecord = undefined;
+				this.editRecord = {};
 			},
 			loadData() {
 				//写入分类缓存
@@ -257,6 +257,7 @@
 				let dayData = this.mirrorData[this.mirrorDataMap.get(day)];
 				if (!dayData) return;
 				this.editRecord = dayData.list[index];
+				console.log("clickItem " + this.editRecord.id);
 				this.editRecord["datetime"] = day;
 				if (this.editRecord.type == 'spend') {
 					let tmp = getApp().globalData.spendTypes;
@@ -284,14 +285,14 @@
 			closeEditBox() {
 				this.isShowEditBox = false;
 				//清除正在编辑的记录
-				this.editRecord = undefined;
+				this.editRecord = {};
 			},
 			deleteItem() {
 				//删除
 				this.doDeleteRecord(this.editRecord.id);
 				this.isShowEditBox = false;
 				//清除正在编辑的记录
-				this.editRecord = undefined;
+				this.editRecord = {};
 			}
 		},
 		watch: {

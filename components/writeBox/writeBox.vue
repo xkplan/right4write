@@ -253,7 +253,7 @@
 			}
 		},
 		mounted() {
-			if (this.editRecord) {
+			if (this.editRecord && this.editRecord.id != undefined) {
 				//修改
 				this.$data.record.id = this.editRecord.id;
 				this.$data.record.type = this.editRecord.type;
