@@ -253,8 +253,6 @@
 			}
 		},
 		mounted() {
-			let date = new Date();
-			this.$data.record.datetime = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
 			if (this.editRecord) {
 				//修改
 				this.$data.record.id = this.editRecord.id;
@@ -278,6 +276,7 @@
 			} else {
 				//新建
 				this.selected = 0;
+				this.$data.record.datetime = new Date().format("yyyy/MM/dd");
 				console.log("重置")
 			}
 
