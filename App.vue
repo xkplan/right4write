@@ -193,11 +193,6 @@
 		},
 		onHide: function() {
 			console.log('App Hide')
-		},
-		methods: {
-			test() {
-				console.log("test");
-			}
 		}
 	}
 </script>
