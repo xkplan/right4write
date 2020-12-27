@@ -25,7 +25,7 @@
 		<view class="inbox" :animation="inboxSlideAnim">
 			<view class="inbox-note">
 				<picker class="inbox-note-datetime" mode="date" @change="inputDatetime">{{record.datetime}}</picker>
-				<input class="inbox-note-content" placeholder="填写备注" :value="record.note" @input="inputNote" />
+				<input class="inbox-note-content" placeholder="填写备注" placeholder-style="color: #BCC2CA" :value="record.note" @input="inputNote" />
 			</view>
 			<input class="inbox-money" placeholder="输入金额" disabled="disabled" :value="record.money" />
 			<view class="inbox-keyboard">
@@ -300,7 +300,12 @@
 				duration: 600,
 				timingFunction: 'ease'
 			});
+			// #ifdef APP-PLUS || APP-NVUE 
 			animation.top('280rpx').step();
+			// #endif
+			// #ifdef MP-QQ || MP-WEIXIN || H5
+			animation.top('225rpx').step();
+			// #endif
 			this.$data.typeListSlideAnim = animation.export();
 
 			animation = uni.createAnimation({
@@ -337,6 +342,12 @@
 	.topBar {
 		width: 750rpx;
 		height: 269rpx;
+		/* #ifdef APP-PLUS || APP-NVUE */
+		height: 269rpx;
+		/* #endif */
+		/* #ifdef MP-QQ || MP-WEIXIN || H5 */
+		height: 214rpx;
+		/* #endif */
 		background: #FFFFFF;
 		box-shadow: 0px -2rpx 15rpx 10rpx rgba(0, 0, 0, 0.02);
 		border-radius: 0rpx 0rpx 43rpx 43rpx;
@@ -349,7 +360,12 @@
 	}
 
 	.topBar-title {
+		/* #ifdef APP-PLUS || APP-NVUE */
 		margin-top: 79rpx;
+		/* #endif */
+		/* #ifdef MP-QQ || MP-WEIXIN || H5 */
+		margin-top: 24rpx;
+		/* #endif */
 		margin-left: 33rpx;
 		height: 88rpx;
 		display: flex;
@@ -505,7 +521,7 @@
 		padding: 0 24rpx;
 		font-size: 25rpx;
 		font-weight: 400;
-		color: #BCC2CA;
+		color: #3C424A;
 		line-height: 34rpx;
 	}
 

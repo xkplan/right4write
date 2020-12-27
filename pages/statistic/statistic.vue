@@ -14,6 +14,7 @@
 				</view>
 				<view class="list-card-item" v-if="curMonthData.length > 0">
 					<canvas canvas-id="lineChart" id="lineChart" class="line-chart"></canvas>
+					<image :src="lineChartImg" style="width: 629rpx; height: 580rpx;"></image>
 				</view>
 				<view class="list-card-item" v-if="curMonthData.length == 0">
 					<image src="/static/statistic/no-data-chart.svg" mode="aspectFit" style="width: 380rpx; height: 380rpx;"></image>
@@ -25,10 +26,11 @@
 					<view class="list-card-title-split"></view>
 					<text class="list-card-title-name">支出项</text>
 				</view>
-				<view class="list-card-item" v-if="spendPieChart">
+				<view class="list-card-item" v-if="spendPieChartData.series.length > 0">
 					<canvas canvas-id="spendPieChart" id="spendPieChart" class="line-chart"></canvas>
+					<image :src="spendPieChartImg" style="width: 629rpx; height: 580rpx;"></image>
 				</view>
-				<view class="list-card-item" v-if="!spendPieChart">
+				<view class="list-card-item" v-if="spendPieChartData.series.length == 0">
 					<image src="/static/statistic/no-data-chart.svg" mode="aspectFit" style="width: 380rpx; height: 380rpx;"></image>
 					<text style="margin-bottom: 64rpx; color: #3C424A;">暂无数据</text>
 				</view>
@@ -38,10 +40,11 @@
 					<view class="list-card-title-split"></view>
 					<text class="list-card-title-name">收入项</text>
 				</view>
-				<view class="list-card-item" v-if="incomePieChart">
+				<view class="list-card-item" v-if="incomePieChartData.series.length > 0">
 					<canvas canvas-id="incomePieChart" id="incomePieChart" class="line-chart"></canvas>
+					<image :src="incomePieChartImg" style="width: 629rpx; height: 580rpx;"></image>
 				</view>
-				<view class="list-card-item" v-if="!incomePieChart">
+				<view class="list-card-item" v-if="incomePieChartData.series.length == 0">
 					<image src="/static/statistic/no-data-chart.svg" mode="aspectFit" style="width: 380rpx; height: 380rpx;"></image>
 					<text style="margin-bottom: 64rpx; color: #3C424A;">暂无数据</text>
 				</view>
@@ -53,18 +56,27 @@
 <script>
 	import uCharts from '../../js_sdk/u-charts/u-charts/u-charts.js';
 
+	var lineChart;
+	var spendPieChart;
+	var incomePieChart;
+
 	export default {
 		data() {
 			return {
 				isShowWriteBox: false,
 				curMonthData: [],
-				lineChart: undefined,
+				// lineChart: undefined,
 				lineChartData: undefined,
-				spendPieChart: undefined,
+				lineChartImg: undefined,
+				// spendPieChart: undefined,
 				spendPieChartData: undefined,
-				incomePieChart: undefined,
+				spendPieChartImg: undefined,
+				// incomePieChart: undefined,
 				incomePieChartData: undefined,
-				pageScrollTop: 0
+				incomePieChartImg: undefined,
+				pageScrollTop: 0,
+				chartWidth: 629,
+				chartHeight: 580
 			}
 		},
 		onLoad() {
@@ -136,29 +148,29 @@
 				if (record.type == 'spend') {
 					if (!this.spendPieChart) this.refreshSpendPieChart();
 					let i = 0;
-					for (; i < this.spendChartData.series.length; i++) {
-						if (this.spendChartData.series[i].name == record.catagory) break;
+					for (; i < this.spendPieChartData.series.length; i++) {
+						if (this.spendPieChartData.series[i].name == record.catagory) break;
 					}
-					if (i == this.spendChartData.series.length) {
-						this.spendChartData.series.push({
+					if (i == this.spendPieChartData.series.length) {
+						this.spendPieChartData.series.push({
 							name: record.catagory,
 							data: 0
 						});
 					}
-					this.spendChartData.series[i].data += record.money;
+					this.spendPieChartData.series[i].data += record.money;
 					this.spendPieChart.updateData(this.spendChartData);
 				} else if (record.type == 'income') {
 					let i = 0;
-					for (; i < this.incomeChartData.series.length; i++) {
-						if (this.incomeChartData.series[i].name == record.catagory) break;
+					for (; i < this.incomePieChartData.series.length; i++) {
+						if (this.incomePieChartData.series[i].name == record.catagory) break;
 					}
-					if (i == this.incomeChartData.series.length) {
-						this.incomeChartData.series.push({
+					if (i == this.incomePieChartData.series.length) {
+						this.incomePieChartData.series.push({
 							name: record.catagory,
 							data: 0
 						});
 					}
-					this.incomeChartData.series[i].data += record.money;
+					this.incomePieChartData.series[i].data += record.money;
 					if (this.incomePieChart == undefined) this.refreshIncomePieChart();
 					this.incomePieChart.updateData(this.incomeChartData);
 				}
@@ -188,6 +200,54 @@
 					} else continue;
 					dayRecords.list.push(record);
 				}
+			},
+			refreshLineChartImage() {
+				let that = this;
+				// setTimeout(function() {
+				uni.canvasToTempFilePath({
+					x: 0,
+					y: 0,
+					width: uni.upx2px(that.chartWidth),
+					height: uni.upx2px(that.chartHeight),
+					fileType: 'png',
+					canvasId: 'lineChart',
+					success: function(res) {
+						that.lineChartImg = res.tempFilePath;
+					}
+				});
+				// }, 50);
+			},
+			refreshSpendPieChartImage() {
+				let that = this;
+				// setTimeout(function() {
+				uni.canvasToTempFilePath({
+					x: 0,
+					y: 0,
+					width: uni.upx2px(that.chartWidth),
+					height: uni.upx2px(that.chartHeight),
+					fileType: 'png',
+					canvasId: 'spendPieChart',
+					success: function(res) {
+						that.spendPieChartImg = res.tempFilePath;
+					}
+				});
+				// }, 50);
+			},
+			refreshIncomePieChartImage() {
+				let that = this;
+				// setTimeout(function() {
+				uni.canvasToTempFilePath({
+					x: 0,
+					y: 0,
+					width: uni.upx2px(that.chartWidth),
+					height: uni.upx2px(that.chartHeight),
+					fileType: 'png',
+					canvasId: 'incomePieChart',
+					success: function(res) {
+						that.incomePieChartImg = res.tempFilePath;
+					}
+				});
+				// }, 50);
 			},
 			refreshLineChart() {
 				this.lineChartData = {
@@ -250,19 +310,24 @@
 							return v + "元";
 						}
 					},
-					width: uni.upx2px(629),
-					height: uni.upx2px(580),
+					width: uni.upx2px(this.chartWidth),
+					height: uni.upx2px(this.chartHeight),
 					extra: {
 						column: {
-							width: uni.upx2px(580) * 0.45 / this.lineChartData.categories.length
+							width: uni.upx2px(this.chartWidth) * 0.45 / this.lineChartData.categories.length
 						},
 						lineStyle: 'straight'
 					}
 				});
+				let that = this;
+				this.lineChart.addEventListener("renderComplete", function() {
+					that.refreshLineChartImage();
+				});
+
 			},
 			refreshIncomePieChart() {
-				if (!this.incomeChartData) {
-					this.incomeChartData = {
+				if (!this.incomePieChartData) {
+					this.incomePieChartData = {
 						series: []
 					};
 				}
@@ -273,18 +338,18 @@
 					for (let record of i.list) {
 						if (record.type == 'income') {
 							if (incomeMap.get(record.catagory) == undefined) {
-								incomeMap.set(record.catagory, this.incomeChartData.series.length);
-								this.incomeChartData.series.push({
+								incomeMap.set(record.catagory, this.incomePieChartData.series.length);
+								this.incomePieChartData.series.push({
 									name: record.catagory,
 									data: 0
 								});
 							}
-							this.incomeChartData.series[incomeMap.get(record.catagory)].data += record.money;
+							this.incomePieChartData.series[incomeMap.get(record.catagory)].data += record.money;
 						}
 					}
 				}
 
-				if (this.incomeChartData.series.length > 0) {
+				if (this.incomePieChartData.series.length > 0) {
 					this.incomePieChart = new uCharts({
 						$this: this,
 						canvasId: "incomePieChart",
@@ -296,8 +361,8 @@
 						animation: false,
 						dataPointShape: false,
 						dataLabel: true,
-						categories: this.incomeChartData.categories,
-						series: this.incomeChartData.series,
+						categories: this.incomePieChartData.categories,
+						series: this.incomePieChartData.series,
 						width: uni.upx2px(629),
 						height: uni.upx2px(580),
 						extra: {
@@ -306,11 +371,16 @@
 							}
 						}
 					});
+
+					let that = this;
+					this.incomePieChart.addEventListener("renderComplete", function() {
+						that.refreshIncomePieChartImage();
+					});
 				} else this.incomePieChart = undefined;
 			},
 			refreshSpendPieChart() {
-				if (!this.spendChartData) {
-					this.spendChartData = {
+				if (!this.spendPieChartData) {
+					this.spendPieChartData = {
 						series: []
 					};
 				}
@@ -321,18 +391,18 @@
 					for (let record of i.list) {
 						if (record.type == 'spend') {
 							if (spendMap.get(record.catagory) == undefined) {
-								spendMap.set(record.catagory, this.spendChartData.series.length);
-								this.spendChartData.series.push({
+								spendMap.set(record.catagory, this.spendPieChartData.series.length);
+								this.spendPieChartData.series.push({
 									name: record.catagory,
 									data: 0
 								});
 							}
-							this.spendChartData.series[spendMap.get(record.catagory)].data += record.money;
+							this.spendPieChartData.series[spendMap.get(record.catagory)].data += record.money;
 						}
 					}
 				}
 
-				if (this.spendChartData.series.length > 0) {
+				if (this.spendPieChartData.series.length > 0) {
 					this.spendPieChart = new uCharts({
 						$this: this,
 						canvasId: "spendPieChart",
@@ -344,8 +414,8 @@
 						animation: false,
 						dataPointShape: false,
 						dataLabel: true,
-						categories: this.spendChartData.categories,
-						series: this.spendChartData.series,
+						categories: this.spendPieChartData.categories,
+						series: this.spendPieChartData.series,
 						width: uni.upx2px(629),
 						height: uni.upx2px(580),
 						extra: {
@@ -353,6 +423,10 @@
 								labelWidth: 10
 							}
 						}
+					});
+					let that = this;
+					this.spendPieChart.addEventListener("renderComplete", function() {
+						that.refreshSpendPieChartImage();
 					});
 				} else this.spendPieChart = undefined;
 			}

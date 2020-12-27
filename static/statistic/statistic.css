@@ -1,5 +1,13 @@
 .list {
+	/* #ifdef APP-PLUS || APP-NVUE */
 	margin-top: 441rpx;
+	/* #endif */
+	/* #ifdef MP-QQ || MP-WEIXIN */
+	margin-top: 362rpx;
+	/* #endif */
+	/* #ifdef H5 */
+	margin-top: 386rpx;
+	/* #endif */
 	margin-bottom: 125rpx;
 	width: 100vw;
 	padding: 0 33rpx;
@@ -50,4 +58,6 @@
 .line-chart {
 	width: 629rpx;
 	height: 580rpx;
+	position: absolute;
+	right: -700rpx;
 }

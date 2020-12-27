@@ -10,12 +10,12 @@
 	top: 600rpx;
 }
 
-.no-data-tip-img{
+.no-data-tip-img {
 	width: 300rpx;
 	height: 300rpx;
 }
 
-.no-data-tip-text{
+.no-data-tip-text {
 	width: 300rpx;
 	text-align: center;
 	margin-top: 24rpx;
@@ -23,7 +23,15 @@
 
 /* 列表 */
 .list {
+	/* #ifdef APP-PLUS || APP-NVUE */
 	margin-top: 441rpx;
+	/* #endif */
+	/* #ifdef MP-QQ || MP-WEIXIN */
+	margin-top: 362rpx;
+	/* #endif */
+	/* #ifdef H5 */
+	margin-top: 386rpx;
+	/* #endif */
 	margin-bottom: 125rpx;
 	width: 100vw;
 	padding: 0 33rpx;

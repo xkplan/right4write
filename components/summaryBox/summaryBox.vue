@@ -78,7 +78,15 @@
 	}
 
 	.title-summary {
+		/* #ifdef APP-PLUS || APP-NVUE */
 		margin-top: 79rpx;
+		/* #endif */
+		/* #ifdef MP-QQ || MP-WEIXIN */
+		margin-top: 0;
+		/* #endif */
+		/* #ifdef H5 */
+		margin-top: 24rpx;
+		/* #endif */
 		font-size: 63rpx;
 		color: #3C424A;
 	}
