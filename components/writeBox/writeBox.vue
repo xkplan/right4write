@@ -120,7 +120,8 @@
 					catagory: ''
 				},
 				typeList: [],
-				keyClicked: ''
+				keyClicked: '',
+				inputKeyLock: false
 			}
 		},
 		onLoad() {},
@@ -156,11 +157,12 @@
 				this.record.note = e.target.value;
 			},
 			inputKey(ch) {
+				if (this.inputKeyLock) return;
 				//点击效果
-				this.$data.keyClicked = ch;
+				this.keyClicked = ch;
 				let that = this;
 				setTimeout(function() {
-					that.$data.keyClicked = '';
+					that.keyClicked = '';
 				}, 200);
 
 				let im = this.record.money;
@@ -183,6 +185,9 @@
 						});
 						return;
 					}
+					
+					//防止重复提交记录
+					this.inputKeyLock = true;
 
 					let that = this;
 					let cc;
@@ -332,7 +337,7 @@
 		background-color: rgba(245, 246, 249, 0);
 		display: flex;
 		align-items: center;
-		z-index: 9999;
+		z-index: 100;
 
 		position: fixed;
 		justify-content: flex-start;

@@ -41,7 +41,7 @@
 		display: flex;
 		justify-content: space-evenly;
 		align-items: center;
-		z-index: 999;
+		z-index: 90;
 	}
 
 	.tabBar image {
