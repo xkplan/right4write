@@ -24,7 +24,7 @@
 
 		<view class="inbox" :animation="inboxSlideAnim">
 			<view class="inbox-note">
-				<picker class="inbox-note-datetime" mode="date" @change="inputDatetime">{{record.datetime}}</picker>
+				<picker class="inbox-note-datetime" mode="date" @change="inputDatetime" :value="datePickerValue" :end="datePickerEnd">{{record.datetime}}</picker>
 				<input class="inbox-note-content" placeholder="填写备注" placeholder-style="color: #BCC2CA" :value="record.note" @input="inputNote" />
 			</view>
 			<input class="inbox-money" placeholder="输入金额" disabled="disabled" :value="record.money" />
@@ -119,6 +119,8 @@
 					datetime: "",
 					catagory: ''
 				},
+				datePickerValue: undefined,
+				datePickerEnd: undefined,
 				typeList: [],
 				keyClicked: '',
 				inputKeyLock: false
@@ -284,6 +286,11 @@
 				this.$data.record.datetime = new Date().format("yyyy/MM/dd");
 				console.log("重置")
 			}
+			
+			//设置日期选择器
+			let dss = this.record.datetime.split('/');
+			this.datePickerValue = new Date(parseInt(dss[0]), parseInt(dss[1]) - 1, parseInt(dss[2])).format("yyyy-MM-dd");
+			this.datePickerEnd = new Date().format("yyyy-MM-dd");
 
 			this.refreshTypeList();
 			let animation = uni.createAnimation({
