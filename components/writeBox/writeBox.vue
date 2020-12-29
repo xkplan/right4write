@@ -13,9 +13,9 @@
 			<view class="topBar-subBar-income-underLine" v-if="record.type == 'income'"></view>
 		</view>
 
-		<scroll-view class="type-list-wrap" scroll-y="true">
+		<scroll-view class="type-list-wrap" scroll-y="true" :scroll-top="typeListScrollTop" scroll-with-animation="true">
 			<view class="type-list" :animation="typeListSlideAnim">
-				<view class="type-list-item" v-for="(type, index) in typeList" @click="select(index)">
+				<view class="type-list-item" v-for="(type, index) in typeList" @click="select(index)" :id="'icon-'+index">
 					<image class="type-list-item-icon" :src="selected == index ? type.selectedIcon: type.icon" />
 					<text class="type-list-item-name" :class="{'font-selected': selected == index}">{{type.name}}</text>
 				</view>
@@ -123,7 +123,8 @@
 				datePickerEnd: undefined,
 				typeList: [],
 				keyClicked: '',
-				inputKeyLock: false
+				inputKeyLock: false,
+				typeListScrollTop: 0
 			}
 		},
 		onLoad() {},
@@ -187,7 +188,7 @@
 						});
 						return;
 					}
-					
+
 					//防止重复提交记录
 					this.inputKeyLock = true;
 
@@ -286,7 +287,20 @@
 				this.$data.record.datetime = new Date().format("yyyy/MM/dd");
 				console.log("重置")
 			}
-			
+
+			//滚动到当前选中分类位置
+			let that = this;
+			setTimeout(function() {
+				uni.createSelectorQuery().select("#icon-" + that.selected).boundingClientRect(res => {
+					// #ifdef APP-PLUS || APP-NVUE 
+					that.typeListScrollTop = res.top - uni.upx2px(307);
+					// #endif
+					// #ifdef MP-QQ || MP-WEIXIN || H5
+					that.typeListScrollTop = res.top - uni.upx2px(252);
+					// #endif
+				}).exec();
+			}, 800);
+
 			//设置日期选择器
 			let dss = this.record.datetime.split('/');
 			this.datePickerValue = new Date(parseInt(dss[0]), parseInt(dss[1]) - 1, parseInt(dss[2])).format("yyyy-MM-dd");
